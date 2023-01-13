@@ -22,8 +22,8 @@ public class ArtistDAO implements CRUDInterface<Artist> {
             long artistId = rs.getLong("ArtistId");
             String name = rs.getString("Name");
             if (artistId != oldId) {
-                Artist artist = new Artist(artistId, name);
-                artists.add(artist);
+                Optional<Artist> artist = create(new Artist(name));
+                artists.add(artist.get());
                 oldId = artistId;
             }
         }
@@ -39,7 +39,8 @@ public class ArtistDAO implements CRUDInterface<Artist> {
         stat.setLong(1, artistId);
         ResultSet rs = stat.executeQuery();
         String name = rs.getString("Name");
-        Optional<Artist> artist = Optional.of(new Artist(artistId, name));
+        Optional<Artist> artist = Optional.of(new Artist(name));
+        artist.get().setArtistId(artistId);
         rs.close();
         stat.close();
         con.close();
@@ -64,7 +65,7 @@ public class ArtistDAO implements CRUDInterface<Artist> {
     }
 
     @Override
-    public Optional<Artist> updated(Artist artist) throws Exception {
+    public Optional<Artist> update(Artist artist) throws Exception {
         con = ConnectToDB.connect();
         PreparedStatement stat = con.prepareStatement("UPDATE Artist SET Name = ? WHERE ArtistId = ?");
         stat.setString(1, artist.getName());

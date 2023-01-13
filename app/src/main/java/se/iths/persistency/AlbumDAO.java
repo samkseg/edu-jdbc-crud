@@ -24,8 +24,8 @@ public class AlbumDAO implements CRUDInterface<Album> {
             String title = rs.getString("Title");
             long artistId = rs.getLong("ArtistId");
             if (albumId != oldId) {
-                Album album = new Album(albumId, title, artistId);
-                albums.add(album);
+                Optional<Album> album = create(new Album(title, artistId));
+                albums.add(album.get());
                 oldId = albumId;
             }
         }
@@ -42,7 +42,8 @@ public class AlbumDAO implements CRUDInterface<Album> {
         ResultSet rs = stat.executeQuery();
         String title = rs.getString("Title");
         long artistId = rs.getLong("ArtistId");
-        Optional<Album> album = Optional.of(new Album(albumId, title, artistId));
+        Optional<Album> album = Optional.of(new Album(title, artistId));
+        album.get().setAlbumId(albumId);
         rs.close();
         stat.close();
         con.close();
@@ -68,7 +69,7 @@ public class AlbumDAO implements CRUDInterface<Album> {
     }
 
     @Override
-    public Optional<Album> updated(Album album) throws Exception {
+    public Optional<Album> update(Album album) throws Exception {
         con = ConnectToDB.connect();
         PreparedStatement stat = con.prepareStatement("UPDATE Album SET Title = ? WHERE AlbumId = ?");
         stat.setString(1, album.getTitle());

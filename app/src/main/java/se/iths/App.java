@@ -15,8 +15,12 @@ public class App {
     ArtistDAO artistDAO = new ArtistDAO();
     AlbumDAO albumDAO = new AlbumDAO();
 
-    Optional<Artist> artist = artistDAO.create(new Artist(-1L, "TestArtist"));
-    Optional<Album> album = albumDAO.create(new Album(-1L, "TestAlbum", artist.get().getArtistId()));
+    Optional<Artist> artist = artistDAO.create(new Artist("TestArtist"));
+    Optional<Album> album = albumDAO.create(new Album("TestAlbum", artist.get().getArtistId()));
     artist.get().add(album.get());
+
+    albumDAO.update(new Album("NewTestAlbum", artist.get().getArtistId()));
+    artistDAO.update(new Artist("NewTestArtist"));
+
   }
 }

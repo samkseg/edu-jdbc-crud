@@ -8,8 +8,7 @@ public class Artist {
     String name;
     Collection<Album> albums;
 
-    public Artist(Long artistId, String name) {
-        this.artistId = artistId;
+    public Artist(String name) {
         this.name = name;
     }
 
