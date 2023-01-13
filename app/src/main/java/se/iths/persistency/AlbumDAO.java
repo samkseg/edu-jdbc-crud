@@ -88,8 +88,9 @@ public class AlbumDAO implements CRUDInterface<Album> {
         PreparedStatement stat = con.prepareStatement("DELETE FROM Album WHERE AlbumId = ?");
         stat.setLong(1, album.getAlbumId());
         stat.execute();
-        ResultSet rs2 = con.createStatement().executeQuery("SELECT Count(*) FROM Album");
-        long countAfter = rs2.getLong("Count");
+
+        rs = con.createStatement().executeQuery("SELECT Count(*) FROM Album");
+        long countAfter = rs.getLong("Count");
         stat.close();
         con.close();
         return countBefore == countAfter + 1;

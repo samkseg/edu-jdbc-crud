@@ -80,11 +80,13 @@ public class ArtistDAO implements CRUDInterface<Artist> {
         con = ConnectToDB.connect();
         ResultSet rs = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
         long countBefore = rs.getLong("Count");
+
         PreparedStatement stat = con.prepareStatement("DELETE FROM Artist WHERE ArtistId = ?");
         stat.setLong(1, artist.getArtistId());
         stat.execute();
-        ResultSet rs2 = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
-        long countAfter = rs2.getLong("Count");
+
+        rs = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
+        long countAfter = rs.getLong("Count");
         stat.close();
         con.close();
         return countBefore == countAfter + 1;
