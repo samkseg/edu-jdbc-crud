@@ -1,11 +1,8 @@
 package se.iths.persistency;
 
-import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Artist;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -13,17 +10,18 @@ import java.util.Optional;
 public class ArtistDAO implements CRUDInterface<Artist> {
     Connection con = null;
     @Override
-    public Collection<Artist> findAll() throws Exception {
+    public Collection<Artist> findAll() throws SQLException {
         con = ConnectToDB.connect();
         Collection<Artist> artists = new ArrayList<>();
-        ResultSet rs = con.createStatement().executeQuery("SELECT AlbumId, Title FROM Album");
+        ResultSet rs = con.createStatement().executeQuery("SELECT ArtistId, Name FROM Artist");
         long oldId = -1L;
         while (rs.next()) {
             long artistId = rs.getLong("ArtistId");
             String name = rs.getString("Name");
             if (artistId != oldId) {
-                Optional<Artist> artist = create(new Artist(name));
-                artists.add(artist.get());
+                Artist artist = new Artist(name);
+                artist.setArtistId(artistId);
+                artists.add(artist);
                 oldId = artistId;
             }
         }
@@ -33,7 +31,7 @@ public class ArtistDAO implements CRUDInterface<Artist> {
     }
 
     @Override
-    public Optional<Artist> findById(long artistId) throws Exception {
+    public Optional<Artist> findById(long artistId) throws SQLException {
         con = ConnectToDB.connect();
         PreparedStatement stat = con.prepareStatement("SELECT ArtistId, Name FROM Artist WHERE ArtistId = ?");
         stat.setLong(1, artistId);
@@ -48,15 +46,16 @@ public class ArtistDAO implements CRUDInterface<Artist> {
     }
 
     @Override
-    public Optional<Artist> create(Artist artist) throws Exception {
+    public Optional<Artist> create(Artist artist) throws SQLException {
         con = ConnectToDB.connect();
         PreparedStatement stat = con.prepareStatement("INSERT INTO Artist(Name) VALUES (?)");
-        String title = artist.getName();
-        stat.setString(1, title);
+        String name = artist.getName();
+        stat.setString(1, name);
         stat.execute();
         stat = con.prepareStatement("SELECT ArtistId FROM Artist WHERE Name = ?");
-        stat.setString(1, artist.getName());
+        stat.setString(1, name);
         ResultSet rs = stat.executeQuery();
+        rs.next();
         long newArtistId = rs.getLong("ArtistId");
         artist.setArtistId(newArtistId);
         stat.close();
@@ -65,7 +64,7 @@ public class ArtistDAO implements CRUDInterface<Artist> {
     }
 
     @Override
-    public Optional<Artist> update(Artist artist) throws Exception {
+    public Optional<Artist> update(Artist artist) throws SQLException {
         con = ConnectToDB.connect();
         PreparedStatement stat = con.prepareStatement("UPDATE Artist SET Name = ? WHERE ArtistId = ?");
         stat.setString(1, artist.getName());
@@ -77,17 +76,19 @@ public class ArtistDAO implements CRUDInterface<Artist> {
     }
 
     @Override
-    public boolean delete(Artist artist) throws Exception {
+    public boolean delete(Artist artist) throws SQLException {
         con = ConnectToDB.connect();
         ResultSet rs = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
-        long countBefore = rs.getLong("Count");
+        rs.next();
+        long countBefore = rs.getLong("Count(*)");
 
         PreparedStatement stat = con.prepareStatement("DELETE FROM Artist WHERE ArtistId = ?");
         stat.setLong(1, artist.getArtistId());
         stat.execute();
 
         rs = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
-        long countAfter = rs.getLong("Count");
+        rs.next();
+        long countAfter = rs.getLong("Count(*)");
         stat.close();
         con.close();
         return countBefore == countAfter + 1;

@@ -7,6 +7,7 @@ public class Album {
     Long artistId;
 
     public Album(String title, Long artistId) {
+        this.albumId = -1L;
         this.title = title;
         this.artistId = artistId;
     }
@@ -33,5 +34,9 @@ public class Album {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String toString() {
+        return String.format("%d %s", albumId, title);
     }
 }

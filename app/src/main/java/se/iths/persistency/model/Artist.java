@@ -6,7 +6,7 @@ import java.util.Collection;
 public class Artist {
     Long artistId;
     String name;
-    Collection<Album> albums;
+    Collection<Album> albums = new ArrayList<>();
 
     public Artist(String name) {
         this.name = name;
@@ -22,10 +22,6 @@ public class Artist {
 
     public Long getId() {
         return artistId;
-    }
-
-    public void setId(Long artistId) {
-        this.artistId = artistId;
     }
 
     public String getName() {
@@ -48,5 +44,21 @@ public class Artist {
     public void remove(Album album) {
         if (albums==null) return;
         albums.remove(album);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(String.valueOf(artistId));
+        sb.append(": ");
+        sb.append(name);
+        if (!albums.isEmpty()) {
+            sb.append("\nAlbums:\n");
+            for(Album album : albums) {
+                sb.append("\t");
+                sb.append(album);
+                sb.append("\n");
+            }
+        }
+        return sb.toString();
     }
 }
