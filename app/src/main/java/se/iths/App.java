@@ -11,8 +11,8 @@ import java.util.Optional;
 
 public class App {
 
-  public static ArrayList<Artist> artists = new ArrayList<>();
-  public static ArrayList<Album> albums = new ArrayList<>();
+  private static ArrayList<Artist> artists = new ArrayList<>();
+  private static ArrayList<Album> albums = new ArrayList<>();
   private static ArtistDAO artistDAO = new ArtistDAO();
   private static AlbumDAO albumDAO = new AlbumDAO();
   public static void main(String[] args) throws SQLException {
@@ -25,7 +25,7 @@ public class App {
       addAlbum(findArtist(276), "TestAlbum2");
 
       updateArtist(findArtist(276), "NewTestArtist");
-      updateAlbum(findArtist(276), 348, "NewTestAlbum");
+      updateAlbum(348, "NewTestAlbum");
 
       deleteAlbum(findArtist(276), 348);
       deleteAlbum(findArtist(276), 349);
@@ -34,11 +34,8 @@ public class App {
     } catch (SQLException e) {
       System.err.println(String.format("Error reading database %s", e.toString()));
     }
-
-
-
-
   }
+
   private void load() throws SQLException {
     loadArtistsAndAlbums();
     for(Artist artist : artists){
@@ -88,7 +85,7 @@ public class App {
     artists.remove(artist);
   }
 
-  private static void updateAlbum(Optional<Artist> artist, long albumId, String newTitle) throws SQLException {
+  private static void updateAlbum(long albumId, String newTitle) throws SQLException {
     for (Album album : albums) {
       if (album.getAlbumId() == albumId) {
         album.setTitle(newTitle);

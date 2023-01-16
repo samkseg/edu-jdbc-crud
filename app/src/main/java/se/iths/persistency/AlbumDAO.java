@@ -51,8 +51,23 @@ public class AlbumDAO implements CRUDInterface<Album> {
         return album;
     }
 
-    public Album findByArtistId(long artistId) {
-        return null;
+    public Collection<Album> findByArtistId(long artistId) throws SQLException {
+        con = ConnectToDB.connect();
+        Collection<Album> albums = new ArrayList<>();
+        PreparedStatement stat = con.prepareStatement("SELECT AlbumId, Title, ArtistId FROM Album WHERE ArtistId = ?;");
+        stat.setLong(1, artistId);
+        ResultSet rs = stat.executeQuery();
+        while (rs.next()) {
+            long albumId = rs.getLong("AlbumId");
+            String title = rs.getString("Title");
+            Optional<Album> album = Optional.of(new Album(title, artistId));
+            album.get().setAlbumId(albumId);
+            albums.add(album.get());
+        }
+        rs.close();
+        stat.close();
+        con.close();
+        return albums;
     }
 
     @Override
