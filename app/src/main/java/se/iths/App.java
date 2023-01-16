@@ -15,7 +15,7 @@ public class App {
   private static ArrayList<Album> albums = new ArrayList<>();
   private static ArtistDAO artistDAO = new ArtistDAO();
   private static AlbumDAO albumDAO = new AlbumDAO();
-  public static void main(String[] args) throws SQLException {
+  public static void main(String[] args) {
     App app = new App();
     try {
 
@@ -54,7 +54,7 @@ public class App {
     }
   }
 
-  private static ArrayList<Album> findAlbumsByArtistId(long artistId) throws SQLException {
+  private static ArrayList<Album> findAlbumsByArtistId(long artistId) {
     ArrayList<Album> artistAlbums = new ArrayList<>();
     for (Album album : albums) {
       if (album.getArtistId() == artistId) {
