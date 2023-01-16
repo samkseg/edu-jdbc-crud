@@ -43,7 +43,7 @@ public class App {
     }
   }
 
-  private ArrayList<Artist> loadArtistsAndAlbums() throws SQLException {
+  private void loadArtistsAndAlbums() throws SQLException {
     artists = (ArrayList<Artist>) artistDAO.findAll();
     albums = (ArrayList<Album>) albumDAO.findAll();
     for (Artist artist : artists) {
@@ -52,7 +52,6 @@ public class App {
         artist.add(album);
       }
     }
-    return artists;
   }
 
   private static ArrayList<Album> findAlbumsByArtistId(long artistId) throws SQLException {
