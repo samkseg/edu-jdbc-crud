@@ -21,16 +21,16 @@ public class App {
     try {
 
       app.load();
-//      addArtist("TestArtist");
-//      addAlbum(findArtist(276), "TestAlbum");
-//      addAlbum(findArtist(276), "TestAlbum2");
-//
-//      updateArtist(findArtist(276), "NewTestArtist");
-//      updateAlbum(348, "NewTestAlbum");
-//
-//      deleteAlbum(findArtist(276), 348);
+      addArtist("TestArtist");
+      addAlbum(findArtist(276), "TestAlbum");
+      addAlbum(findArtist(276), "TestAlbum2");
+
+      updateArtist(findArtist(276), "NewTestArtist");
+      updateAlbum(348, "NewTestAlbum");
+
+      deleteAlbum(findArtist(276), 348);
 //      deleteAlbum(findArtist(276), 349);
-//      deleteArtist(findArtist(276));
+      deleteArtist(findArtist(276));
 
     } catch (SQLException e) {
       System.err.println(String.format("Error reading database %s", e.toString()));
