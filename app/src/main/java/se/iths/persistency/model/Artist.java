@@ -40,6 +40,10 @@ public class Artist {
         albums = albums==null?new ArrayList<Album>():albums;
         albums.add(album);
     }
+    public void addAll(Collection<Album> artistAlbums) {
+        albums = albums==null?new ArrayList<Album>():albums;
+        albums = artistAlbums;
+    }
 
     public void remove(Album album) {
         if (albums==null) return;
@@ -60,5 +64,10 @@ public class Artist {
             }
         }
         return sb.toString();
+    }
+
+    public void removeAll() {
+        if (albums==null) return;
+        albums.clear();
     }
 }

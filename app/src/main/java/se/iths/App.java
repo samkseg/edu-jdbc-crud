@@ -7,6 +7,7 @@ import se.iths.persistency.model.Artist;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Optional;
 
 public class App {
@@ -28,7 +29,7 @@ public class App {
       updateAlbum(348, "NewTestAlbum");
 
       deleteAlbum(findArtist(276), 348);
-      deleteAlbum(findArtist(276), 349);
+//      deleteAlbum(findArtist(276), 349);
       deleteArtist(findArtist(276));
 
     } catch (SQLException e) {
@@ -47,39 +48,32 @@ public class App {
     artists = (ArrayList<Artist>) artistDAO.findAll();
     albums = (ArrayList<Album>) albumDAO.findAll();
     for (Artist artist : artists) {
-      ArrayList<Album> artistAlbums = findAlbumsByArtistId(artist.getId());
-      for(Album album : artistAlbums) {
-        artist.add(album);
-      }
+      Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.getArtistId());
+      artist.addAll(artistAlbums);
     }
-  }
-
-  private static ArrayList<Album> findAlbumsByArtistId(long artistId) {
-    ArrayList<Album> artistAlbums = new ArrayList<>();
-    for (Album album : albums) {
-      if (album.getArtistId() == artistId) {
-        artistAlbums.add(album);
-      }
-    }
-    return artistAlbums;
   }
 
   private static void deleteAlbum(Optional<Artist> artist, long albumId) throws SQLException {
-    for (Album album : findAlbumsByArtistId(artist.get().getArtistId())) {
-      if (album.getAlbumId() == albumId) {
-        boolean deleted = albumDAO.delete(album);
-        if (deleted) {
-          artist.get().remove(album);
-          albums.remove(album);
+    if (!artist.get().getAlbums().isEmpty()) {
+      for (Album album : artist.get().getAlbums()) {
+        if (album.getAlbumId() == albumId) {
+          boolean deleted = albumDAO.delete(album);
+          if (deleted) {
+            artist.get().remove(album);
+            albums.remove(album);
+          }
         }
       }
     }
   }
 
+
   private static void deleteArtist(Optional<Artist> artist) throws SQLException {
-    for (Album album : findAlbumsByArtistId(artist.get().getArtistId())) {
-      deleteAlbum(artist, album.getAlbumId());
+    for (Album album : artist.get().getAlbums()) {
+      albumDAO.delete(album);
+      albums.remove(album);
     }
+    artist.get().removeAll();
     artistDAO.delete(artist.get());
     artists.remove(artist);
   }

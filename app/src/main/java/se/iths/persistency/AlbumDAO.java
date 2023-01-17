@@ -79,9 +79,7 @@ public class AlbumDAO implements CRUDInterface<Album> {
         stat.setString(1, title);
         stat.setLong(2,artistId);
         stat.execute();
-        stat = con.prepareStatement("SELECT AlbumId FROM Album WHERE Title = ? AND ArtistId = ?");
-        stat.setString(1, album.getTitle());
-        stat.setLong(2, album.getArtistId());
+        stat = con.prepareStatement("SELECT * FROM Album ORDER BY AlbumId DESC");
         ResultSet rs = stat.executeQuery();
         rs.next();
         long newAlbumId = rs.getLong("AlbumId");
