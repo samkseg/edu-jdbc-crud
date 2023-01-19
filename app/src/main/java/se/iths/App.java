@@ -6,13 +6,11 @@ import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Artist;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 public class App {
-
-  private static ArrayList<Artist> artists = new ArrayList<>();
+  private static HashMap<Long, Artist> artists = new HashMap();
+  private static HashMap<Long, Album> albums = new HashMap();
   private static ArtistDAO artistDAO = new ArtistDAO();
   private static AlbumDAO albumDAO = new AlbumDAO();
   public static void main(String[] args) {
@@ -20,16 +18,16 @@ public class App {
     try {
 
       app.load();
-      addArtist("TestArtist");
-      addAlbum(findArtist(276), "TestAlbum");
-      addAlbum(findArtist(276), "TestAlbum2");
 
-      updateArtist(findArtist(276), "NewTestArtist");
+      addArtist("TestArtist");
+      addAlbum(276, "TestAlbum");
+      addAlbum(276, "TestAlbum2");
+
+      updateArtist(276, "NewTestArtist");
       updateAlbum(348, "NewTestAlbum");
 
-      deleteAlbum(findArtist(276), 348);
-//      deleteAlbum(findArtist(276), 349);
-      deleteArtist(findArtist(276));
+      deleteAlbum(276, 348);
+      deleteArtist(276);
 
     } catch (SQLException e) {
       System.err.println(String.format("Error reading database %s", e.toString()));
@@ -38,20 +36,22 @@ public class App {
 
   private void load() throws SQLException {
     loadArtistsAndAlbums();
-    for(Artist artist : artists){
+    for(Artist artist : artists.values()){
       System.out.println(artist);
     }
   }
 
   private void loadArtistsAndAlbums() throws SQLException {
-    artists = (ArrayList<Artist>) artistDAO.findAll();
-    for (Artist artist : artists) {
+    for (Artist artist : artistDAO.findAll()) {
+      artists.put(artist.getArtistId(), artist);
       Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.getArtistId());
       artist.addAll(artistAlbums);
+      artistAlbums.forEach(album -> albums.put(album.getAlbumId(), album));
     }
   }
 
-  private static void deleteAlbum(Optional<Artist> artist, long albumId) throws SQLException {
+  private static void deleteAlbum(long artistId, long albumId) throws SQLException {
+    Optional<Artist> artist = Optional.of(artists.get(artistId));
     for (Album album : artist.get().getAlbums()) {
       if (album.getAlbumId() == albumId) {
         boolean deleted = albumDAO.delete(album);
@@ -62,48 +62,38 @@ public class App {
     }
   }
 
-  private static void deleteArtist(Optional<Artist> artist) throws SQLException {
+  private static void deleteArtist(long artistId) throws SQLException {
+    Optional<Artist> artist = Optional.of(artists.get(artistId));
+    int counter = 0;
     for (Album album : artist.get().getAlbums()) {
-      albumDAO.delete(album);
+      if (albumDAO.delete(album)) counter++;
     }
-    artist.get().removeAll();
-    artistDAO.delete(artist.get());
-    artists.remove(artist);
+    if (counter == artist.get().getAlbums().size()) artist.get().removeAll();
+    boolean artistDeleted = artistDAO.delete(artist.get());
+    if (artistDeleted) artists.remove(artist.get().getArtistId());
   }
 
   private static void updateAlbum(long albumId, String newTitle) throws SQLException {
-    for (Artist artist : artists) {
-      for (Album album : artist.getAlbums()) {
-        if (album.getAlbumId() == albumId) {
-          album.setTitle(newTitle);
-          albumDAO.update(album);
-        }
-      }
-    }
+    Album album = albums.get(albumId);
+    album.setTitle(newTitle);
+    albumDAO.update(album);
   }
 
-  private static void updateArtist(Optional<Artist> artist, String newName) throws SQLException {
+  private static void updateArtist(long artistId, String newName) throws SQLException {
+    Optional<Artist> artist = Optional.of(artists.get(artistId));
     artist.get().setName(newName);
-    artistDAO.update(artist.get());
-  }
-
-  private static Optional<Artist> findArtist (long artistId) {
-    Artist artistFound = null;
-    for (Artist artist : artists) {
-      if (artist.getArtistId() == artistId) {
-        artistFound = artist;
-      }
-    }
-    return Optional.of(artistFound);
+    artist = artistDAO.update(artist.get());
   }
 
   private static void addArtist(String name) throws SQLException {
     Optional<Artist> artist = artistDAO.create(new Artist(name));
-    artists.add(artist.get());
+    artists.put(artist.get().getArtistId(), artist.get());
   }
 
-  private static void addAlbum(Optional<Artist> artist, String name) throws SQLException {
-    Optional<Album> album = albumDAO.create(new Album(name, artist.get().getArtistId()));
-    artist.get().add(album.get());
+  private static void addAlbum(long artistId, String name) throws SQLException {
+    Artist artist = artists.get(artistId);
+    Optional<Album> album = albumDAO.create(new Album(name, artist.getArtistId()));
+    artist.add(album.get());
+    albums.put(album.get().getAlbumId(), album.get());
   }
 }
