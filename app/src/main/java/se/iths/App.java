@@ -52,18 +52,15 @@ public class App {
   }
 
   private static void deleteAlbum(Optional<Artist> artist, long albumId) throws SQLException {
-    if (!artist.get().getAlbums().isEmpty()) {
-      for (Album album : artist.get().getAlbums()) {
-        if (album.getAlbumId() == albumId) {
-          boolean deleted = albumDAO.delete(album);
-          if (deleted) {
+    for (Album album : artist.get().getAlbums()) {
+      if (album.getAlbumId() == albumId) {
+        boolean deleted = albumDAO.delete(album);
+        if (deleted) {
             artist.get().remove(album);
-          }
         }
       }
     }
   }
-
 
   private static void deleteArtist(Optional<Artist> artist) throws SQLException {
     for (Album album : artist.get().getAlbums()) {
