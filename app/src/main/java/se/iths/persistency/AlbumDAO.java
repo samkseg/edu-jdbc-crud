@@ -38,7 +38,7 @@ public class AlbumDAO implements CRUDInterface<Album> {
     @Override
     public Optional<Album> findById(long albumId) throws SQLException {
         con = ConnectToDB.connect();
-        PreparedStatement stat = con.prepareStatement("SELECT AlbumId, Title FROM Album WHERE AlbumId = ?;");
+        PreparedStatement stat = con.prepareStatement("SELECT AlbumId, Title FROM Album WHERE AlbumId = ?");
         stat.setLong(1, albumId);
         ResultSet rs = stat.executeQuery();
         String title = rs.getString("Title");
@@ -54,7 +54,7 @@ public class AlbumDAO implements CRUDInterface<Album> {
     public Collection<Album> findByArtistId(long artistId) throws SQLException {
         con = ConnectToDB.connect();
         Collection<Album> albums = new ArrayList<>();
-        PreparedStatement stat = con.prepareStatement("SELECT AlbumId, Title, ArtistId FROM Album WHERE ArtistId = ?;");
+        PreparedStatement stat = con.prepareStatement("SELECT AlbumId, Title, ArtistId FROM Album WHERE ArtistId = ?");
         stat.setLong(1, artistId);
         ResultSet rs = stat.executeQuery();
         while (rs.next()) {

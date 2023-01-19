@@ -13,7 +13,6 @@ import java.util.Optional;
 public class App {
 
   private static ArrayList<Artist> artists = new ArrayList<>();
-  private static ArrayList<Album> albums = new ArrayList<>();
   private static ArtistDAO artistDAO = new ArtistDAO();
   private static AlbumDAO albumDAO = new AlbumDAO();
   public static void main(String[] args) {
@@ -49,7 +48,6 @@ public class App {
     for (Artist artist : artists) {
       Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.getArtistId());
       artist.addAll(artistAlbums);
-      albums.addAll(artistAlbums);
     }
   }
 
@@ -60,7 +58,6 @@ public class App {
           boolean deleted = albumDAO.delete(album);
           if (deleted) {
             artist.get().remove(album);
-            albums.remove(album);
           }
         }
       }
@@ -71,7 +68,6 @@ public class App {
   private static void deleteArtist(Optional<Artist> artist) throws SQLException {
     for (Album album : artist.get().getAlbums()) {
       albumDAO.delete(album);
-      albums.remove(album);
     }
     artist.get().removeAll();
     artistDAO.delete(artist.get());
@@ -79,10 +75,12 @@ public class App {
   }
 
   private static void updateAlbum(long albumId, String newTitle) throws SQLException {
-    for (Album album : albums) {
-      if (album.getAlbumId() == albumId) {
-        album.setTitle(newTitle);
-        albumDAO.update(album);
+    for (Artist artist : artists) {
+      for (Album album : artist.getAlbums()) {
+        if (album.getAlbumId() == albumId) {
+          album.setTitle(newTitle);
+          albumDAO.update(album);
+        }
       }
     }
   }
@@ -110,6 +108,5 @@ public class App {
   private static void addAlbum(Optional<Artist> artist, String name) throws SQLException {
     Optional<Album> album = albumDAO.create(new Album(name, artist.get().getArtistId()));
     artist.get().add(album.get());
-    albums.add(album.get());
   }
 }
