@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 public class AlbumDAO implements CRUDInterface<Album> {
-
     Connection con = null;
     @Override
     public Collection<Album> findAll() throws SQLException {
