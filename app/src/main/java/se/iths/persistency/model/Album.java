@@ -1,7 +1,5 @@
 package se.iths.persistency.model;
 
-import java.util.Objects;
-
 public class Album {
     Long albumId;
     String title;

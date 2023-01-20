@@ -1,9 +1,6 @@
 package se.iths.persistency;
 
-import se.iths.persistency.model.Artist;
-
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
