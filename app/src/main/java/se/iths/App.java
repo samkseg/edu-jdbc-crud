@@ -10,7 +10,6 @@ import java.util.*;
 
 public class App {
   private static HashMap<Long, Artist> artists = new HashMap();
-  private static HashMap<Long, Album> albums = new HashMap();
   private static ArtistDAO artistDAO = new ArtistDAO();
   private static AlbumDAO albumDAO = new AlbumDAO();
   public static void main(String[] args) {
@@ -27,7 +26,7 @@ public class App {
       Optional<Album> testGetAlbumFromDatabaseAndReplaceWithNewObject = findAlbumById(348);
 
       updateArtist(276, "NewTestArtist");
-      updateAlbum(348, "NewTestAlbum");
+      updateAlbum(276,348, "NewTestAlbum");
 
       deleteAlbum(276, 348);
       deleteArtist(276);
@@ -65,18 +64,15 @@ public class App {
     Artist artist = artists.get(artistId);
     Optional<Album> album = albumDAO.create(new Album(name, artist.getArtistId()));
     artist.add(album.get());
-    albums.put(album.get().getAlbumId(), album.get());
   }
 
   // READ - load all & get new objects by id from database
   private void loadArtistsAndAlbums() throws SQLException {
     artists.clear();
-    albums.clear();
     for (Artist artist : artistDAO.findAll()) {
       artists.put(artist.getArtistId(), artist);
       Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.getArtistId());
       artist.addAll(artistAlbums);
-      artistAlbums.forEach(album -> albums.put(album.getAlbumId(), album));
     }
   }
 
@@ -86,7 +82,6 @@ public class App {
       Collection<Album> artistAlbums = albumDAO.findByArtistId(artistId);
       artist.get().addAll(artistAlbums);
       artists.replace(artistId, artist.get());
-      artistAlbums.forEach(album -> albums.replace(album.getAlbumId(), album));
     }
     return artist;
   }
@@ -94,7 +89,6 @@ public class App {
   private static Optional<Album> findAlbumById (long albumId) throws SQLException {
     Optional<Album> album = albumDAO.findById(albumId);
     if (album.isPresent()) {
-      albums.replace(albumId, album.get());
       Artist artist = artists.get(album.get().getArtistId());
       artist.replace(album.get());
     }
@@ -108,8 +102,9 @@ public class App {
     artistDAO.update(artist.get());
   }
 
-  private static void updateAlbum(long albumId, String newTitle) throws SQLException {
-    Optional<Album> album = Optional.of(albums.get(albumId));
+  private static void updateAlbum(long artistId, long albumId, String newTitle) throws SQLException {
+    Optional<Artist> artist = Optional.of(artists.get(artistId));
+    Optional<Album> album = Optional.of(artist.get().getAlbum(albumId));
     album.get().setTitle(newTitle);
     albumDAO.update(album.get());
   }
@@ -130,9 +125,6 @@ public class App {
     Optional<Artist> artist = Optional.of(artists.get(artistId));
     Album album = artist.get().getAlbum(albumId);
     boolean deletedFromDB = albumDAO.delete(album);
-      if (deletedFromDB) {
-        albums.remove(albumId);
-        artist.get().remove(album);
-      }
+    if (deletedFromDB) artist.get().remove(album);
   }
 }
