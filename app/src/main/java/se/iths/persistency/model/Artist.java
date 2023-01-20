@@ -46,7 +46,7 @@ public class Artist {
     }
 
     public void addAll(Collection<Album> artistAlbums) {
-        albums = albums==null?new HashMap<Long, Album>():albums;
+        albums = new HashMap<Long, Album>();
         artistAlbums.forEach(album -> albums.put(album.albumId, album));
     }
 
