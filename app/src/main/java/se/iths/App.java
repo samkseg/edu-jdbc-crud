@@ -23,14 +23,21 @@ public class App {
       addAlbum(276, "TestAlbum");
       addAlbum(276, "TestAlbum2");
 
-      Optional<Artist> testArtist = findArtistById(276);
-      Optional<Album> testFindAlbum = findAlbumById(348);
+      Optional<Artist> testGetArtistFromDatabaseAndReplaceWithNewObject = findArtistById(276);
+      Optional<Album> testGetAlbumFromDatabaseAndReplaceWithNewObject = findAlbumById(348);
 
       updateArtist(276, "NewTestArtist");
       updateAlbum(348, "NewTestAlbum");
 
       deleteAlbum(276, 348);
       deleteArtist(276);
+
+      addArtist("TestArtist2");
+      addAlbum(277, "TestAlbum3");
+      addAlbum(277, "TestAlbum4");
+
+      printList();
+      System.out.println("Expected: TestArtist2 (ArtistId 277), TestAlbum3 (AlbumId 350) + TestAlbum4 (AlbumId 351)");
 
     } catch (SQLException e) {
       System.err.println(String.format("Error reading database %s", e.toString()));
@@ -39,12 +46,16 @@ public class App {
 
   private void load() throws SQLException {
     loadArtistsAndAlbums();
+    printList();
+  }
+
+  private static void printList() {
     for(Artist artist : artists.values()){
       System.out.println(artist);
     }
   }
 
-//  CREATE - add objects to database
+  //  CREATE - add new objects to database
   private static void addArtist(String name) throws SQLException {
     Optional<Artist> artist = artistDAO.create(new Artist(name));
     artists.put(artist.get().getArtistId(), artist.get());
@@ -57,7 +68,7 @@ public class App {
     albums.put(album.get().getAlbumId(), album.get());
   }
 
-  // READ - load all & find from database
+  // READ - load all & get new objects by id from database
   private void loadArtistsAndAlbums() throws SQLException {
     artists.clear();
     albums.clear();
@@ -71,8 +82,8 @@ public class App {
 
   private static Optional<Artist> findArtistById (long artistId) throws SQLException {
     Optional<Artist> artist = artistDAO.findById(artistId);
-    if (!artist.isEmpty()) {
-      Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.get().getArtistId());
+    if (artist.isPresent()) {
+      Collection<Album> artistAlbums = albumDAO.findByArtistId(artistId);
       artist.get().addAll(artistAlbums);
       artists.replace(artistId, artist.get());
       artistAlbums.forEach(album -> albums.replace(album.getAlbumId(), album));
@@ -81,13 +92,11 @@ public class App {
   }
 
   private static Optional<Album> findAlbumById (long albumId) throws SQLException {
-    Optional<Album> album = Optional.of(albums.get(albumId));
-    Optional<Album> newAlbum = albumDAO.findById(albumId);
-    if (!newAlbum.isEmpty()) {
-      albums.replace(albumId, newAlbum.get());
-      Optional<Artist> artist = artistDAO.findById(newAlbum.get().getArtistId());
-      if (!album.isEmpty()) artist.get().remove(album.get());
-      artist.get().add(newAlbum.get());
+    Optional<Album> album = albumDAO.findById(albumId);
+    if (album.isPresent()) {
+      albums.replace(albumId, album.get());
+      Artist artist = artists.get(album.get().getArtistId());
+      artist.replace(album.get());
     }
     return album;
   }
@@ -96,7 +105,7 @@ public class App {
   private static void updateArtist(long artistId, String newName) throws SQLException {
     Optional<Artist> artist = Optional.of(artists.get(artistId));
     artist.get().setName(newName);
-    artist = artistDAO.update(artist.get());
+    artistDAO.update(artist.get());
   }
 
   private static void updateAlbum(long albumId, String newTitle) throws SQLException {
@@ -113,19 +122,17 @@ public class App {
       if (albumDAO.delete(album)) counter++;
     }
     if (counter == artist.get().getAlbums().size()) artist.get().removeAll();
-    boolean artistDeleted = artistDAO.delete(artist.get());
-    if (artistDeleted) artists.remove(artist.get().getArtistId());
+    boolean deletedFromDB = artistDAO.delete(artist.get());
+    if (deletedFromDB) artists.remove(artist.get().getArtistId());
   }
 
   private static void deleteAlbum(long artistId, long albumId) throws SQLException {
     Optional<Artist> artist = Optional.of(artists.get(artistId));
-    for (Album album : artist.get().getAlbums()) {
-      if (album.getAlbumId() == albumId) {
-        boolean deleted = albumDAO.delete(album);
-        if (deleted) {
-            artist.get().remove(album);
-        }
+    Album album = artist.get().getAlbum(albumId);
+    boolean deletedFromDB = albumDAO.delete(album);
+      if (deletedFromDB) {
+        albums.remove(albumId);
+        artist.get().remove(album);
       }
-    }
   }
 }

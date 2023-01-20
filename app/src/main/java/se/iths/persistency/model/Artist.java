@@ -2,11 +2,12 @@ package se.iths.persistency.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class Artist {
     Long artistId;
     String name;
-    Collection<Album> albums = new ArrayList<>();
+    HashMap<Long, Album> albums = new HashMap<>();
 
     public Artist(String name) {
         this.name = name;
@@ -33,21 +34,35 @@ public class Artist {
     }
 
     public Collection<Album> getAlbums() {
-        return albums;
+        return albums.values();
+    }
+
+    public Album getAlbum (long albumId){
+        return albums.get(albumId);
     }
 
     public void add(Album album) {
-        albums = albums==null?new ArrayList<Album>():albums;
-        albums.add(album);
+        albums = albums==null?new HashMap<Long, Album>():albums;
+        albums.put(album.albumId, album);
     }
+
     public void addAll(Collection<Album> artistAlbums) {
-        albums = albums==null?new ArrayList<Album>():albums;
-        albums = artistAlbums;
+        albums = albums==null?new HashMap<Long, Album>():albums;
+        artistAlbums.forEach(album -> albums.put(album.albumId, album));
+    }
+
+    public void replace(Album album) {
+        albums.replace(album.albumId, album);
     }
 
     public void remove(Album album) {
         if (albums==null) return;
-        albums.remove(album);
+        albums.remove(album.getAlbumId());
+    }
+
+    public void removeAll() {
+        if (albums==null) return;
+        albums.clear();
     }
 
     @Override
@@ -57,17 +72,12 @@ public class Artist {
         sb.append(name);
         if (!albums.isEmpty()) {
             sb.append("\nAlbums:\n");
-            for(Album album : albums) {
+            for(Album album : albums.values()) {
                 sb.append("\t");
                 sb.append(album);
                 sb.append("\n");
             }
         }
         return sb.toString();
-    }
-
-    public void removeAll() {
-        if (albums==null) return;
-        albums.clear();
     }
 }
