@@ -109,9 +109,9 @@ public class App {
   }
 
   private static void updateAlbum(long albumId, String newTitle) throws SQLException {
-    Album album = albums.get(albumId);
-    album.setTitle(newTitle);
-    albumDAO.update(album);
+    Optional<Album> album = Optional.of(albums.get(albumId));
+    album.get().setTitle(newTitle);
+    albumDAO.update(album.get());
   }
 
   // DELETE - removes objects from database
