@@ -189,6 +189,7 @@ public class App {
         Collection<Track> albumTracks = trackDAO.findByAlbumId(albumId);
         album.get().addAll(albumTracks);
         artist.get().replace(album.get());
+        artists.replace(artist.get().getArtistId(), artist.get());
         return album;
       }
     }
@@ -203,6 +204,7 @@ public class App {
       if (album.isPresent() && artist.isPresent()) {
         album.get().replace(track.get());
         artist.get().replace(album.get());
+        artists.replace(artist.get().getArtistId(), artist.get());
         return track;
       }
     }
