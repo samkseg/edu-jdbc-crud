@@ -70,9 +70,9 @@ public class Artist {
         sb.append(": ");
         sb.append(name);
         if (!albums.isEmpty()) {
-            sb.append("\nAlbums:\n");
+            sb.append("\n\tAlbums:\n");
             for(Album album : albums.values()) {
-                sb.append("\t");
+                sb.append("\t\t");
                 sb.append(album);
                 sb.append("\n");
             }
