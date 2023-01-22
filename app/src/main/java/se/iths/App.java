@@ -42,10 +42,10 @@ public class App {
       addAlbum(277, "TestAlbum4");
       addAlbum(278, "TestAlbum5");
 
-      addTrack(277, 350, "TestTrack");
-      addTrack(277, 350, "TestTrack2");
-      addTrack(277, 351, "TestTrack3");
-      addTrack(278, 352, "TestTrack4");
+      addTrack(350, "TestTrack");
+      addTrack(350, "TestTrack2");
+      addTrack(351, "TestTrack3");
+      addTrack(352, "TestTrack4");
 
       Optional<Track> testGetTrackFromDatabase = findTrackById(3504);
 
@@ -57,9 +57,8 @@ public class App {
 
 //    Handle empty Optional
 
-      addAlbum(0, "TestAlbumWithoutArtist");
-      addTrack(0, 350, "TestTrackWithoutArtist");
-      addTrack(277, 0, "TestTrackWithoutAlbum");
+      addAlbum(0, "TestAddAlbumWithoutArtistId");
+      addTrack(0, "TestAddTrackWithoutAlbumId");
 
 
 
@@ -111,12 +110,14 @@ public class App {
     }
   }
 
-  private static void addTrack(long artistId, long albumId, String name) throws SQLException {
-    Optional<Artist> artist = findArtistById(artistId);
+  private static void addTrack(long albumId, String name) throws SQLException {
     Optional<Album> album = findAlbumById(albumId);
-    if (artist.isPresent() && album.isPresent()) {
-      Optional<Track> track = trackDAO.create(new Track(name, album.get().getAlbumId()));
-      track.ifPresent(a -> album.get().add(a));
+    if (album.isPresent()) {
+      Optional<Artist> artist = findArtistById(album.get().getArtistId());
+      if (artist.isPresent() && album.isPresent()) {
+        Optional<Track> track = trackDAO.create(new Track(name, album.get().getAlbumId()));
+        track.ifPresent(a -> album.get().add(a));
+      }
     }
   }
 
