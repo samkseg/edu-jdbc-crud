@@ -36,11 +36,13 @@ public class ArtistDAO implements CRUDInterface<Artist> {
         PreparedStatement stat = con.prepareStatement("SELECT ArtistId, Name FROM Artist WHERE ArtistId = ?");
         stat.setLong(1, artistId);
         ResultSet rs = stat.executeQuery();
-        rs.next();
-        long newArtistId = rs.getLong("ArtistId");
-        String name = rs.getString("Name");
-        Optional<Artist> artist = Optional.of(new Artist(name));
-        artist.get().setArtistId(newArtistId);
+        Optional<Artist> artist = Optional.empty();
+        if (rs.next()) {
+            long newArtistId = rs.getLong("ArtistId");
+            String name = rs.getString("Name");
+            artist = Optional.of(new Artist(name));
+            artist.get().setArtistId(newArtistId);
+        }
         rs.close();
         stat.close();
         con.close();

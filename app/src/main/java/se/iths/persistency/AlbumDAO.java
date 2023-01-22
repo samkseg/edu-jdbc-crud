@@ -40,11 +40,13 @@ public class AlbumDAO implements CRUDInterface<Album> {
         PreparedStatement stat = con.prepareStatement("SELECT Title, ArtistId FROM Album WHERE AlbumId = ?");
         stat.setLong(1, albumId);
         ResultSet rs = stat.executeQuery();
-        rs.next();
-        String title = rs.getString("Title");
-        long artistId = rs.getLong("ArtistId");
-        Optional<Album> album = Optional.of(new Album(title, artistId));
-        album.get().setAlbumId(albumId);
+        Optional<Album> album = Optional.empty();
+        if(rs.next()) {
+            String title = rs.getString("Title");
+            long artistId = rs.getLong("ArtistId");
+            album = Optional.of(new Album(title, artistId));
+            album.get().setAlbumId(albumId);
+        }
         rs.close();
         stat.close();
         con.close();

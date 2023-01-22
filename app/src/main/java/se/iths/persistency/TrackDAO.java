@@ -40,11 +40,13 @@ public class TrackDAO implements CRUDInterface<Track>{
         PreparedStatement stat = con.prepareStatement("SELECT Name, AlbumId FROM Track WHERE TrackId = ?");
         stat.setLong(1, trackId);
         ResultSet rs = stat.executeQuery();
-        rs.next();
-        String name = rs.getString("Name");
-        long albumId = rs.getLong("AlbumId");
-        Optional<Track> track = Optional.of(new Track(name, albumId));
-        track.get().setTrackId(trackId);
+        Optional<Track> track = Optional.empty();
+        if (rs.next()) {
+            String name = rs.getString("Name");
+            long albumId = rs.getLong("AlbumId");
+            track = Optional.of(new Track(name, albumId));
+            track.get().setTrackId(trackId);
+        }
         rs.close();
         stat.close();
         con.close();
