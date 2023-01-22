@@ -88,8 +88,7 @@ public class App {
   }
 
   private void load() throws SQLException {
-    loadArtistsAndAlbums();
-    printList();
+    loadArtistsAlbumsTracks();
   }
 
   private static void printList() {
@@ -121,8 +120,8 @@ public class App {
     }
   }
 
-  // READ - load all & get new objects by id from database
-  private void loadArtistsAndAlbums() throws SQLException {
+  // READ - load all, find all & get new objects by id from database
+  private void loadArtistsAlbumsTracks() throws SQLException {
     artists.clear();
     for (Artist artist : artistDAO.findAll()) {
       artists.put(artist.getArtistId(), artist);
@@ -133,6 +132,38 @@ public class App {
         album.addAll(albumTracks);
       }
     }
+  }
+
+  private static Collection<Album> findAllAlbums() throws SQLException {
+    artists.clear();
+    Collection<Album> albums = new ArrayList<>();
+    for (Artist artist : artistDAO.findAll()) {
+      artists.put(artist.getArtistId(), artist);
+      Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.getArtistId());
+      artist.addAll(artistAlbums);
+      albums.addAll(artistAlbums);
+      for (Album album : artistAlbums) {
+        Collection<Track> albumTracks = trackDAO.findByAlbumId(album.getAlbumId());
+        album.addAll(albumTracks);
+      }
+    }
+    return albums;
+  }
+
+  private static Collection<Track> findAllTracks() throws SQLException {
+    artists.clear();
+    Collection<Track> tracks = new ArrayList<>();
+    for (Artist artist : artistDAO.findAll()) {
+      artists.put(artist.getArtistId(), artist);
+      Collection<Album> artistAlbums = albumDAO.findByArtistId(artist.getArtistId());
+      artist.addAll(artistAlbums);
+      for (Album album : artistAlbums) {
+        Collection<Track> albumTracks = trackDAO.findByAlbumId(album.getAlbumId());
+        album.addAll(albumTracks);
+        tracks.addAll(albumTracks);
+      }
+    }
+    return tracks;
   }
 
   private static Optional<Artist> findArtistById (long artistId) throws SQLException {
