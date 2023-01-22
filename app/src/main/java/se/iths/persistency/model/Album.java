@@ -75,9 +75,9 @@ public class Album {
         sb.append(": ");
         sb.append(title);
         if (!tracks.isEmpty()) {
-            sb.append("\n\t\tTracks:\n");
+            sb.append("\n\t\t\tTracks:\n");
             for(Track track : tracks.values()) {
-                sb.append("\t\t\t");
+                sb.append("\t\t\t\t");
                 sb.append(track);
                 sb.append("\n");
             }

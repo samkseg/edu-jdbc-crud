@@ -54,7 +54,7 @@ public class App {
       deleteArtist(278);
 
       printList();
-      System.out.println("Expected:\n277: TestArtist2\n\tAlbums:\n\t\t350: TestAlbum3\n\t\t\t3504: NewTestTrack");
+      System.out.println("Expected:\n277: TestArtist2\n\tAlbums:\n\t\t350: TestAlbum3\n\t\t\tTracks:\n\t\t\t\t3504: NewTestTrack");
 
     } catch (SQLException e) {
       System.err.println(String.format("Error reading database %s", e.toString()));

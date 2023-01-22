@@ -36,6 +36,6 @@ public class Track {
 
     @Override
     public String toString() {
-        return String.format("%d %s", trackId, name);
+        return trackId + ": " + name;
     }
 }
