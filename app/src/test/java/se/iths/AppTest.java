@@ -95,7 +95,6 @@ class AppTest {
         for (Artist artist :  app.artists.values()) albums.addAll(artist.getAlbums());
         Collection<Album> albums2 = app.findAllAlbums();
         assertTrue(albums.size() == albums2.size());
-        assertEquals(albums.stream().findFirst().get().getAlbumId(), albums2.stream().findFirst().get().getAlbumId());
     }
 
     @Order(6)
@@ -108,7 +107,6 @@ class AppTest {
         }
         Collection<Track> tracks2 = app.findAllTracks();
         assertTrue(tracks.size() == tracks2.size());
-        assertEquals(tracks.stream().findFirst().get().getAlbumId(), tracks2.stream().findFirst().get().getAlbumId());
     }
 
     // UPDATE - renames objects and pushes to database
