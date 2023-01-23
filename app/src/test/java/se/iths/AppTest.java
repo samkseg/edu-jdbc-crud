@@ -37,10 +37,12 @@ class AppTest {
         Optional<Artist> artist1 = app.addArtist("TestArtist1");
         Optional<Artist> artist2 = app.addArtist("TestArtist2");
         Optional<Artist> artist3 = app.addArtist("TestArtist3");
+        Optional<Artist> artist4 = app.addArtist("TestArtist4");
 
         assertEquals("TestArtist1", artist1.get().getName());
         assertEquals("TestArtist2", artist2.get().getName());
         assertEquals("TestArtist3", artist3.get().getName());
+        assertEquals("TestArtist4", artist4.get().getName());
     }
 
     @Order(2)
@@ -51,12 +53,15 @@ class AppTest {
         Optional<Album> album3 = app.addAlbum(277, "TestAlbum3");
         Optional<Album> album4 = app.addAlbum(277, "TestAlbum4");
         Optional<Album> album5 = app.addAlbum(278, "TestAlbum5");
+        Optional<Album> album6 = app.addAlbum(279, "TestAlbum6");
+
 
         assertEquals("TestAlbum1", album1.get().getTitle());
         assertEquals("TestAlbum2", album2.get().getTitle());
         assertEquals("TestAlbum3", album3.get().getTitle());
         assertEquals("TestAlbum4", album4.get().getTitle());
         assertEquals("TestAlbum5", album5.get().getTitle());
+        assertEquals("TestAlbum6", album6.get().getTitle());
     }
 
     @Order(3)
@@ -66,11 +71,13 @@ class AppTest {
         Optional<Track> track2 = app.addTrack(350, "TestTrack2");
         Optional<Track> track3 = app.addTrack(351, "TestTrack3");
         Optional<Track> track4 = app.addTrack(352, "TestTrack4");
+        Optional<Track> track5 = app.addTrack(353, "TestTrack5");
 
         assertEquals("TestTrack1", track1.get().getName());
         assertEquals("TestTrack2", track2.get().getName());
         assertEquals("TestTrack3", track3.get().getName());
         assertEquals("TestTrack4", track4.get().getName());
+        assertEquals("TestTrack5", track5.get().getName());
     }
 
     // READ - load all, find all & get new objects by id from database
@@ -165,8 +172,29 @@ class AppTest {
         Optional<Track> track = app.findTrackById(3505);
         assertTrue(track.isEmpty());
     }
-    // Optional - prevent empty object insertion to database
+
     @Order(13)
+    @Test
+    void shouldDeleteArtistsAlbumsTracks() throws SQLException {
+        assertTrue(app.deleteArtist(279));
+        Collection<Album> allAlbums = app.findAllAlbums();
+        Collection<Album> albums = new ArrayList<>();
+        Collection<Track> tracks = new ArrayList<>();
+        for (Album album : allAlbums) {
+            if (album.getArtistId() == 279) {
+                albums.add(album);
+                tracks.addAll(album.getTracks());
+            }
+        }
+        assertTrue(tracks.isEmpty());
+        assertTrue(albums.isEmpty());
+
+        Optional<Artist> artist = app.findArtistById(279);
+        assertTrue(artist.isEmpty());
+    }
+
+    // Optional - prevent empty object insertion to database
+    @Order(14)
     @Test
     void shouldNotCreateEmptyOptional () throws SQLException {
         Optional<Album> TestAddAlbumWithoutArtistId = app.addAlbum(0, "TestTitle");
@@ -176,7 +204,7 @@ class AppTest {
         assertTrue(TestAddTrackWithoutAlbumId.isEmpty());
     }
 
-    @Order(14)
+    @Order(15)
     @Test
     void shouldNotReadEmptyOptional () throws SQLException {
         Optional<Artist> testGetEmptyArtist = app.findArtistById(0);
