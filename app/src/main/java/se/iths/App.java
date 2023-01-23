@@ -11,114 +11,60 @@ import java.sql.*;
 import java.util.*;
 
 public class App {
-  private static HashMap<Long, Artist> artists = new HashMap();
+  protected static HashMap<Long, Artist> artists = new HashMap();
   private static ArtistDAO artistDAO = new ArtistDAO();
-  private static AlbumDAO albumDAO = new AlbumDAO();
-  private static TrackDAO trackDAO = new TrackDAO();
+  protected static AlbumDAO albumDAO = new AlbumDAO();
+  protected static TrackDAO trackDAO = new TrackDAO();
   public static void main(String[] args) {
     App app = new App();
     try {
 
       app.load();
-
-//    CRUD
-
-      addArtist("TestArtist");
-      addAlbum(276, "TestAlbum");
-      addAlbum(276, "TestAlbum2");
-
-      Optional<Artist> testGetArtistFromDatabase = findArtistById(276);
-      Optional<Album> testGetAlbumFromDatabase = findAlbumById(348);
-
-      updateArtist(276, "NewTestArtist");
-      updateAlbum(348, "NewTestAlbum");
-
-      deleteAlbum(348);
-      deleteArtist(276);
-
-      addArtist("TestArtist2");
-      addArtist("TestArtist3");
-      addAlbum(277, "TestAlbum3");
-      addAlbum(277, "TestAlbum4");
-      addAlbum(278, "TestAlbum5");
-
-      addTrack(350, "TestTrack");
-      addTrack(350, "TestTrack2");
-      addTrack(351, "TestTrack3");
-      addTrack(352, "TestTrack4");
-
-      Optional<Track> testGetTrackFromDatabase = findTrackById(3504);
-
-      updateTrack(3504, "NewTestTrack");
-
-      deleteTrack(3505);
-      deleteAlbum(351);
-      deleteArtist(278);
-
-//    Handle empty Optional
-
-      addAlbum(0, "TestAddAlbumWithoutArtistId");
-      addTrack(0, "TestAddTrackWithoutAlbumId");
-
-
-
-      updateArtist(0, "NewTestArtist");
-      updateAlbum(0, "NewTestAlbum");
-      updateTrack(0, "NewTestTrack2");
-
-      boolean deletedArtist = deleteArtist(0);
-      boolean deletedAlbum = deleteAlbum(0);
-      boolean deletedTrack = deleteTrack(0);
-
       printList();
-      System.out.println("Expected:\n277: TestArtist2\n\tAlbums:\n\t\t350: TestAlbum3\n\t\t\tTracks:\n\t\t\t\t3504: NewTestTrack\n");
-
-      Optional<Artist> testGetEmptyArtistFromDatabase = findArtistById(0);
-      Optional<Album> testGetEmptyAlbumFromDatabase = findAlbumById(0);
-      Optional<Track> testGetEmptyTrackFromDatabase = findTrackById(0);
-
-      if (!deletedArtist) System.out.println("ArtistId: 0 not found");
-      if (!deletedAlbum) System.out.println("AlbumId: 0 not found");
-      if (!deletedTrack) System.out.println("TrackId: 0 not found");
 
     } catch (SQLException e) {
       System.err.println(String.format("Error reading database %s", e.toString()));
     }
   }
 
-  private void load() throws SQLException {
+  protected void load() throws SQLException {
     loadArtistsAlbumsTracks();
   }
 
-  private static void printList() {
+  protected static void printList() {
     for(Artist artist : artists.values()){
       System.out.println(artist);
     }
   }
 
   //  CREATE - add new objects to database
-  private static void addArtist(String name) throws SQLException {
+  protected static Optional<Artist> addArtist(String name) throws SQLException {
     Optional<Artist> artist = artistDAO.create(new Artist(name));
     artist.ifPresent(a -> artists.put(a.getArtistId(), a));
+    return artist;
   }
 
-  private static void addAlbum(long artistId, String title) throws SQLException {
+  protected static Optional<Album> addAlbum(long artistId, String title) throws SQLException {
     Optional<Artist> artist = findArtistById(artistId);
     if (artist.isPresent()) {
       Optional<Album> album = albumDAO.create(new Album(title, artist.get().getArtistId()));
       album.ifPresent(a -> artist.get().add(a));
+      return album;
     }
+    return Optional.empty();
   }
 
-  private static void addTrack(long albumId, String name) throws SQLException {
+  protected static Optional<Track> addTrack(long albumId, String name) throws SQLException {
     Optional<Album> album = findAlbumById(albumId);
     if (album.isPresent()) {
       Optional<Artist> artist = findArtistById(album.get().getArtistId());
       if (artist.isPresent() && album.isPresent()) {
         Optional<Track> track = trackDAO.create(new Track(name, album.get().getAlbumId()));
         track.ifPresent(a -> album.get().add(a));
+        return track;
       }
     }
+    return Optional.empty();
   }
 
   // READ - load all, find all & get new objects by id from database
@@ -135,7 +81,7 @@ public class App {
     }
   }
 
-  private static Collection<Album> findAllAlbums() throws SQLException {
+  protected static Collection<Album> findAllAlbums() throws SQLException {
     artists.clear();
     Collection<Album> albums = new ArrayList<>();
     for (Artist artist : artistDAO.findAll()) {
@@ -151,7 +97,7 @@ public class App {
     return albums;
   }
 
-  private static Collection<Track> findAllTracks() throws SQLException {
+  protected static Collection<Track> findAllTracks() throws SQLException {
     artists.clear();
     Collection<Track> tracks = new ArrayList<>();
     for (Artist artist : artistDAO.findAll()) {
@@ -167,7 +113,7 @@ public class App {
     return tracks;
   }
 
-  private static Optional<Artist> findArtistById (long artistId) throws SQLException {
+  protected static Optional<Artist> findArtistById(long artistId) throws SQLException {
     Optional<Artist> artist = artistDAO.findById(artistId);
     if (artist.isPresent()) {
       Collection<Album> artistAlbums = albumDAO.findByArtistId(artistId);
@@ -182,7 +128,7 @@ public class App {
     return Optional.empty();
   }
 
-  private static Optional<Album> findAlbumById (long albumId) throws SQLException {
+  protected static Optional<Album> findAlbumById(long albumId) throws SQLException {
     Optional<Album> album = albumDAO.findById(albumId);
     if (album.isPresent()) {
       Optional<Artist> artist = findArtistById(album.get().getArtistId());
@@ -197,15 +143,17 @@ public class App {
     return Optional.empty();
   }
 
-  private static Optional<Track> findTrackById (long trackId) throws SQLException {
+  protected static Optional<Track> findTrackById(long trackId) throws SQLException {
     Optional<Track> track = trackDAO.findById(trackId);
     if (track.isPresent()) {
       Optional<Album> album = findAlbumById(track.get().getAlbumId());
-      Optional<Artist> artist = findArtistById(album.get().getArtistId());
-      if (album.isPresent() && artist.isPresent()) {
-        album.get().replace(track.get());
-        artist.get().replace(album.get());
-        artists.replace(artist.get().getArtistId(), artist.get());
+      if (album.isPresent()) {
+        Optional<Artist> artist = findArtistById(album.get().getArtistId());
+        if (artist.isPresent()) {
+          album.get().replace(track.get());
+          artist.get().replace(album.get());
+          artists.replace(artist.get().getArtistId(), artist.get());
+        }
         return track;
       }
     }
@@ -213,32 +161,35 @@ public class App {
   }
 
   // UPDATE - renames objects and pushes to database
-  private static void updateArtist(long artistId, String newName) throws SQLException {
+  protected static Optional<Artist> updateArtist(long artistId, String newName) throws SQLException {
     Optional<Artist> artist = findArtistById(artistId);
     if (artist.isPresent()) {
       artist.get().setName(newName);
       artistDAO.update(artist.get());
     }
+    return artist;
   }
 
-  private static void updateAlbum(long albumId, String newTitle) throws SQLException {
+  protected static Optional<Album> updateAlbum(long albumId, String newTitle) throws SQLException {
     Optional<Album> album = findAlbumById(albumId);
     if (album.isPresent()) {
       album.get().setTitle(newTitle);
       albumDAO.update(album.get());
     }
+    return album;
   }
 
-  private static void updateTrack(long trackId, String newName) throws SQLException {
+  protected static Optional<Track> updateTrack(long trackId, String newName) throws SQLException {
     Optional<Track> track = findTrackById(trackId);
     if (track.isPresent()) {
       track.get().setName(newName);
       trackDAO.update(track.get());
     }
+    return track;
   }
 
   // DELETE - removes objects from database
-  private static boolean deleteArtist(long artistId) throws SQLException {
+  protected static boolean deleteArtist(long artistId) throws SQLException {
     Optional<Artist> artist = findArtistById(artistId);
     int countAlbum = 0;
     if (artist.isPresent()) {
@@ -260,7 +211,7 @@ public class App {
     return false;
   }
 
-  private static boolean deleteAlbum(long albumId) throws SQLException {
+  protected static boolean deleteAlbum(long albumId) throws SQLException {
     Optional<Album> album = findAlbumById(albumId);
     if (album.isPresent()) {
       Optional<Artist> artist = findArtistById(album.get().getArtistId());
@@ -278,7 +229,7 @@ public class App {
     return false;
   }
 
-  private  static boolean deleteTrack(long trackId) throws SQLException {
+  protected static boolean deleteTrack(long trackId) throws SQLException {
     Optional<Track> track = findTrackById(trackId);
     if (track.isPresent()) {
       Optional<Album> album = findAlbumById(track.get().getAlbumId());
