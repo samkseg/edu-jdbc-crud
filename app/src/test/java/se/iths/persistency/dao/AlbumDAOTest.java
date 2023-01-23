@@ -59,7 +59,7 @@ public class AlbumDAOTest {
     @Test
     public void shouldFindAllAlbumsForArtist() throws SQLException {
         //Given
-        Long artistId = 1L;
+        Long artistId = 275L;
 
         //When
         Collection<Album> albums = albumDAO.findByArtistId(artistId);
@@ -71,14 +71,14 @@ public class AlbumDAOTest {
     @Test
     public void shouldFindAlbumById() throws SQLException {
         //Given
-        Long existingId = 1L;
-        Optional<Album> album1 = albumDAO.create(new Album("A title", 275L));
+        Long existingId = 275L;
+        Optional<Album> album1 = albumDAO.create(new Album("A title", existingId));
 
         //When
         Optional<Album> album = albumDAO.findById(album1.get().getAlbumId());
 
         //Then
-        assertNotNull(album.get());
+        assertTrue(album.isPresent());
     }
 
     @Test
@@ -96,7 +96,7 @@ public class AlbumDAOTest {
     @Test
     public void shouldUpdateAlbum() throws SQLException {
         //Given
-        Long existingId = 1L;
+        Long existingId = 275L;
         String oldTitle = "An old title";
         String newTitle = "A new title";
         Optional<Album> album = albumDAO.create(new Album(oldTitle, existingId));

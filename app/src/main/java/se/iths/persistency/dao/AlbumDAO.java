@@ -80,7 +80,7 @@ public class AlbumDAO implements CRUDInterface<Album> {
         PreparedStatement stat = con.prepareStatement("INSERT INTO Album(Title, ArtistId) VALUES (?, ?)");
         String title = album.getTitle();
         long artistId = album.getArtistId();
-        if (artistId == 0L) {
+        if (artistId <= 0L) {
             throw new RuntimeException("Album can't be created without Artist!");
         }
         stat.setString(1, title);
