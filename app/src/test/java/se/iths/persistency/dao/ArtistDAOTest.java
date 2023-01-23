@@ -3,11 +3,9 @@ package se.iths.persistency.dao;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
-import se.iths.persistency.ConnectToDB;
 import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Artist;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Optional;
@@ -15,12 +13,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArtistDAOTest {
-    private static Connection con = null;
     ArtistDAO artistDAO = new ArtistDAO();
 
     @BeforeAll
     public static void setUp() throws Exception {
-        con = ConnectToDB.connect();
         App app = new App();
         app.load();
     }
