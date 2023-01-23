@@ -19,5 +19,5 @@ application {
 
 tasks.named('test') {
     useJUnitPlatform()
-//    testLogging.showStandardSterams = true
+    testLogging.showStandardStreams = true
 }
