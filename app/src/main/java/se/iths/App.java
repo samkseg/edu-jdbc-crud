@@ -41,8 +41,11 @@ public class App {
   //  CREATE - add new objects to database
   protected static Optional<Artist> addArtist(String name) throws SQLException {
     Optional<Artist> artist = artistDAO.create(new Artist(name));
-    artist.ifPresent(a -> artists.put(a.getArtistId(), a));
-    return artist;
+    if (artist.isPresent()) {
+      artists.put(artist.get().getArtistId(), artist.get());
+      return artist;
+    }
+    return Optional.empty();
   }
 
   protected static Optional<Album> addAlbum(long artistId, String title) throws SQLException {
@@ -167,8 +170,9 @@ public class App {
     if (artist.isPresent()) {
       artist.get().setName(newName);
       artistDAO.update(artist.get());
+      return artist;
     }
-    return artist;
+    return Optional.empty();
   }
 
   protected static Optional<Album> updateAlbum(long albumId, String newTitle) throws SQLException {
@@ -176,8 +180,9 @@ public class App {
     if (album.isPresent()) {
       album.get().setTitle(newTitle);
       albumDAO.update(album.get());
+      return album;
     }
-    return album;
+    return Optional.empty();
   }
 
   protected static Optional<Track> updateTrack(long trackId, String newName) throws SQLException {
@@ -185,8 +190,9 @@ public class App {
     if (track.isPresent()) {
       track.get().setName(newName);
       trackDAO.update(track.get());
+      return track;
     }
-    return track;
+    return Optional.empty();
   }
 
   // DELETE - removes objects from database
