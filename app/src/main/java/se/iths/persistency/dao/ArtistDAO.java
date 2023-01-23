@@ -1,5 +1,7 @@
-package se.iths.persistency;
+package se.iths.persistency.dao;
 
+import se.iths.persistency.CRUDInterface;
+import se.iths.persistency.ConnectToDB;
 import se.iths.persistency.model.Artist;
 
 import java.sql.*;
@@ -36,7 +38,7 @@ public class ArtistDAO implements CRUDInterface<Artist> {
         PreparedStatement stat = con.prepareStatement("SELECT ArtistId, Name FROM Artist WHERE ArtistId = ?");
         stat.setLong(1, artistId);
         ResultSet rs = stat.executeQuery();
-        Optional<Artist> artist = Optional.empty();
+        Optional<Artist> artist = null;
         if (rs.next()) {
             long newArtistId = rs.getLong("ArtistId");
             String name = rs.getString("Name");

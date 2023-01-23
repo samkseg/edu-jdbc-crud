@@ -1,5 +1,7 @@
-package se.iths.persistency;
+package se.iths.persistency.dao;
 
+import se.iths.persistency.CRUDInterface;
+import se.iths.persistency.ConnectToDB;
 import se.iths.persistency.model.Album;
 
 import java.sql.Connection;
@@ -78,6 +80,9 @@ public class AlbumDAO implements CRUDInterface<Album> {
         PreparedStatement stat = con.prepareStatement("INSERT INTO Album(Title, ArtistId) VALUES (?, ?)");
         String title = album.getTitle();
         long artistId = album.getArtistId();
+        if (artistId == 0L) {
+            throw new RuntimeException("Album can't be created without Artist!");
+        }
         stat.setString(1, title);
         stat.setLong(2,artistId);
         stat.execute();

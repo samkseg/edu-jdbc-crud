@@ -1,8 +1,8 @@
 package se.iths;
 
-import se.iths.persistency.AlbumDAO;
-import se.iths.persistency.ArtistDAO;
-import se.iths.persistency.TrackDAO;
+import se.iths.persistency.dao.AlbumDAO;
+import se.iths.persistency.dao.ArtistDAO;
+import se.iths.persistency.dao.TrackDAO;
 import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Artist;
 import se.iths.persistency.model.Track;
@@ -11,10 +11,11 @@ import java.sql.*;
 import java.util.*;
 
 public class App {
-  protected static HashMap<Long, Artist> artists = new HashMap();
-  private static ArtistDAO artistDAO = new ArtistDAO();
-  protected static AlbumDAO albumDAO = new AlbumDAO();
-  protected static TrackDAO trackDAO = new TrackDAO();
+
+  private static final ArtistDAO artistDAO = new ArtistDAO();
+  protected static final AlbumDAO albumDAO = new AlbumDAO();
+  protected static final TrackDAO trackDAO = new TrackDAO();
+  protected static HashMap<Long, Artist> artists = new HashMap<>();
   public static void main(String[] args) {
     App app = new App();
     try {
@@ -23,11 +24,11 @@ public class App {
       printList();
 
     } catch (SQLException e) {
-      System.err.println(String.format("Error reading database %s", e.toString()));
+      System.err.printf("Error reading database %s%n", e);
     }
   }
 
-  protected void load() throws SQLException {
+  public void load() throws SQLException {
     loadArtistsAlbumsTracks();
   }
 
@@ -58,7 +59,7 @@ public class App {
     Optional<Album> album = findAlbumById(albumId);
     if (album.isPresent()) {
       Optional<Artist> artist = findArtistById(album.get().getArtistId());
-      if (artist.isPresent() && album.isPresent()) {
+      if (artist.isPresent()) {
         Optional<Track> track = trackDAO.create(new Track(name, album.get().getAlbumId()));
         track.ifPresent(a -> album.get().add(a));
         return track;
@@ -215,15 +216,17 @@ public class App {
     Optional<Album> album = findAlbumById(albumId);
     if (album.isPresent()) {
       Optional<Artist> artist = findArtistById(album.get().getArtistId());
-      int counter = 0;
-      for (Track track : album.get().getTracks()) {
-        if (trackDAO.delete(track)) counter++;
-      }
-      if (counter == album.get().getTracks().size()) album.get().removeAll();
-      boolean deletedFromDB = albumDAO.delete(album.get());
-      if (deletedFromDB) {
-        artist.get().remove(album.get());
-        return true;
+      if(artist.isPresent()) {
+        int counter = 0;
+        for (Track track : album.get().getTracks()) {
+          if (trackDAO.delete(track)) counter++;
+        }
+        if (counter == album.get().getTracks().size()) album.get().removeAll();
+        boolean deletedFromDB = albumDAO.delete(album.get());
+        if (deletedFromDB) {
+          artist.get().remove(album.get());
+          return true;
+        }
       }
     }
     return false;
@@ -233,10 +236,12 @@ public class App {
     Optional<Track> track = findTrackById(trackId);
     if (track.isPresent()) {
       Optional<Album> album = findAlbumById(track.get().getAlbumId());
-      boolean deletedFromDB = trackDAO.delete(track.get());
-      if (deletedFromDB) {
-        album.get().remove(track.get());
-        return true;
+      if (album.isPresent()) {
+        boolean deletedFromDB = trackDAO.delete(track.get());
+        if (deletedFromDB) {
+          album.get().remove(track.get());
+          return true;
+        }
       }
     }
     return false;

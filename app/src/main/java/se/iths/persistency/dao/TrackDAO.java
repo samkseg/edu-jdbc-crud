@@ -1,5 +1,7 @@
-package se.iths.persistency;
+package se.iths.persistency.dao;
 
+import se.iths.persistency.CRUDInterface;
+import se.iths.persistency.ConnectToDB;
 import se.iths.persistency.model.Track;
 
 import java.sql.Connection;
@@ -10,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
-public class TrackDAO implements CRUDInterface<Track>{
+public class TrackDAO implements CRUDInterface<Track> {
     Connection con = null;
     @Override
     public Collection<Track> findAll() throws SQLException {

@@ -33,7 +33,7 @@ class AppTest {
     //  CREATE - add new objects to database
     @Order(1)
     @Test
-    void testCreateArtists() throws SQLException {
+    void shouldCreateArtists() throws SQLException {
         Optional<Artist> artist1 = app.addArtist("TestArtist1");
         Optional<Artist> artist2 = app.addArtist("TestArtist2");
         Optional<Artist> artist3 = app.addArtist("TestArtist3");
@@ -45,7 +45,7 @@ class AppTest {
 
     @Order(2)
     @Test
-    void testCreateAlbums() throws SQLException {
+    void shouldCreateAlbums() throws SQLException {
         Optional<Album> album1 = app.addAlbum(276, "TestAlbum1");
         Optional<Album> album2 = app.addAlbum(276, "TestAlbum2");
         Optional<Album> album3 = app.addAlbum(277, "TestAlbum3");
@@ -61,7 +61,7 @@ class AppTest {
 
     @Order(3)
     @Test
-    void testCreateTracks() throws SQLException {
+    void shouldCreateTracks() throws SQLException {
         Optional<Track> track1 = app.addTrack(350, "TestTrack1");
         Optional<Track> track2 = app.addTrack(350, "TestTrack2");
         Optional<Track> track3 = app.addTrack(351, "TestTrack3");
@@ -76,7 +76,7 @@ class AppTest {
     // READ - load all, find all & get new objects by id from database
     @Order(4)
     @Test
-    void testRead() throws SQLException {
+    void shouldRead() throws SQLException {
         Optional<Artist> testGetArtistFromDatabase = app.findArtistById(277);
         assertEquals("TestArtist2", testGetArtistFromDatabase.get().getName());
 
@@ -90,7 +90,7 @@ class AppTest {
 
     @Order(5)
     @Test
-    void testFindAllAlbums() throws SQLException {
+    void shouldFindAllAlbums() throws SQLException {
         Collection<Album> albums = new ArrayList<>();
         for (Artist artist :  app.artists.values()) albums.addAll(artist.getAlbums());
         Collection<Album> albums2 = app.findAllAlbums();
@@ -99,7 +99,7 @@ class AppTest {
 
     @Order(6)
     @Test
-    void testFindAllTracks() throws SQLException {
+    void shouldFindAllTracks() throws SQLException {
         Collection<Track> tracks = new ArrayList<>();
         for (Artist artist :  app.artists.values()) {
             for (Album album : app.artists.get(artist.getArtistId()).getAlbums())
@@ -112,7 +112,7 @@ class AppTest {
     // UPDATE - renames objects and pushes to database
     @Order(7)
     @Test
-    void testUpdateArtist() throws SQLException {
+    void shouldUpdateArtist() throws SQLException {
         app.updateArtist(276, "NewTestArtist");
         Optional<Artist> artist = app.findArtistById(276);
         assertEquals("NewTestArtist", artist.get().getName());
@@ -120,7 +120,7 @@ class AppTest {
 
     @Order(8)
     @Test
-    void testUpdateAlbum() throws SQLException {
+    void shouldUpdateAlbum() throws SQLException {
         app.updateAlbum(348, "NewTestAlbum");
         Optional<Album> album = app.findAlbumById(348);
         assertEquals("NewTestAlbum", album.get().getTitle());
@@ -128,7 +128,7 @@ class AppTest {
 
     @Order(9)
     @Test
-    void testUpdateTrack() throws SQLException {
+    void shouldUpdateTrack() throws SQLException {
         app.updateTrack(3504, "NewTestTrack");
         Optional<Track> track = app.findTrackById(3504);
         assertEquals("NewTestTrack", track.get().getName());
@@ -137,7 +137,7 @@ class AppTest {
     // DELETE - removes objects from database
     @Order(10)
     @Test
-    void testDeleteAlbums() throws SQLException {
+    void shouldDeleteAlbums() throws SQLException {
         assertTrue(app.deleteAlbum(348));
         Optional<Album> album1 = app.findAlbumById(348);
         assertTrue(album1.isEmpty());
@@ -149,7 +149,7 @@ class AppTest {
 
     @Order(11)
     @Test
-    void testDeleteArtists() throws SQLException {
+    void shouldDeleteArtists() throws SQLException {
         assertTrue(app.deleteArtist(276));
         Optional<Artist> artist1 = app.findArtistById(276);
         assertTrue(artist1.isEmpty());
@@ -160,15 +160,15 @@ class AppTest {
     }
     @Order(12)
     @Test
-    void testDeleteTracks() throws SQLException {
+    void shouldDeleteTracks() throws SQLException {
         assertTrue(app.deleteTrack(3505));
         Optional<Track> track = app.findTrackById(3505);
         assertTrue(track.isEmpty());
     }
-
+    // Optional - prevent empty object insertion to database
     @Order(13)
     @Test
-    void testCreateEmptyOptional () throws SQLException {
+    void shouldNotCreateEmptyOptional () throws SQLException {
         Optional<Album> TestAddAlbumWithoutArtistId = app.addAlbum(0, "TestTitle");
         assertTrue(TestAddAlbumWithoutArtistId.isEmpty());
 
@@ -178,7 +178,7 @@ class AppTest {
 
     @Order(14)
     @Test
-    void testReadEmptyOptional () throws SQLException {
+    void shouldNotReadEmptyOptional () throws SQLException {
         Optional<Artist> testGetEmptyArtist = app.findArtistById(0);
         assertTrue(testGetEmptyArtist.isEmpty());
 
@@ -191,7 +191,7 @@ class AppTest {
 
     @Order(15)
     @Test
-    void testUpdateEmptyOptional () throws SQLException {
+    void shouldNotUpdateEmptyOptional () throws SQLException {
         Optional<Artist> testUpdateEmptyArtist = app.updateArtist(0, "NewTestArtist");
         assertTrue(testUpdateEmptyArtist.isEmpty());
 
@@ -204,7 +204,7 @@ class AppTest {
 
     @Order(16)
     @Test
-    void testDeleteEmptyOptional () throws SQLException {
+    void shouldNotDeleteEmptyOptional () throws SQLException {
         boolean deletedArtist = app.deleteArtist(0);
         assertFalse(deletedArtist);
 
