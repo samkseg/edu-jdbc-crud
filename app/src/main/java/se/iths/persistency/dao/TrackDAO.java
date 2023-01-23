@@ -80,9 +80,11 @@ public class TrackDAO implements CRUDInterface<Track> {
     public Optional<Track> create(Track track) throws SQLException {
         con = ConnectToDB.connect();
         PreparedStatement stat = con.prepareStatement("INSERT INTO Track(Name, AlbumId, MediaTypeId, Milliseconds, UnitPrice) VALUES (?, ?, ?, ?, ?)");
-
         String name = track.getName();
         long albumId = track.getAlbumId();
+        if (albumId <= 0L) {
+            throw new RuntimeException("Album can't be created without Artist!");
+        }
         stat.setString(1, name);
         stat.setLong(2, albumId);
         stat.setLong(3, 1);
