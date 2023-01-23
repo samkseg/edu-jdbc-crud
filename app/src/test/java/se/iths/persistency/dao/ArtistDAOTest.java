@@ -1,10 +1,12 @@
 package se.iths.persistency.dao;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
 import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Artist;
+import se.iths.persistency.model.Track;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -13,12 +15,29 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ArtistDAOTest {
-    ArtistDAO artistDAO = new ArtistDAO();
+    static ArtistDAO artistDAO = new ArtistDAO();
+    static App app = new App();
 
     @BeforeAll
     public static void setUp() throws Exception {
-        App app = new App();
         app.load();
+    }
+    @AfterAll
+    public static void last() throws Exception {
+        deleteAllModified();
+    }
+
+    private static void deleteAllModified() throws SQLException {
+        Optional<Artist> artist1 = artistDAO.findById(280);
+        artistDAO.delete(artist1.get());
+        Optional<Artist> artist2 = artistDAO.findById(282);
+        artistDAO.delete(artist2.get());
+        Optional<Artist> artist3 = artistDAO.findById(283);
+        artistDAO.delete(artist3.get());
+        Optional<Artist> artist4 = artistDAO.findById(285);
+        artistDAO.delete(artist4.get());
+        Optional<Artist> artist5 = artistDAO.findById(286);
+        artistDAO.delete(artist5.get());
     }
 
     @Test
@@ -62,11 +81,11 @@ public class ArtistDAOTest {
         Artist artist = new Artist("A Name");
 
         //When
-        Optional<Artist> persistentArtistm = artistDAO.create(artist);
+        Optional<Artist> persistentArtist = artistDAO.create(artist);
 
         //Then
-        assertNotNull( persistentArtistm.get().getArtistId(), "Artist id must not be null after create!");
-        assertTrue(persistentArtistm.get().getArtistId() >0, "Artist id must be greater than 0 after create!");
+        assertNotNull( persistentArtist.get().getArtistId(), "Artist id must not be null after create!");
+        assertTrue(persistentArtist.get().getArtistId() >0, "Artist id must be greater than 0 after create!");
     }
 
     @Test
@@ -78,11 +97,11 @@ public class ArtistDAOTest {
         artist.add(new Album("Title 3", artist.getArtistId()));
 
         //When
-        Optional<Artist> persistentArtistm = artistDAO.create(artist);
+        Optional<Artist> persistentArtist = artistDAO.create(artist);
 
         //Then
-        assertNotNull( persistentArtistm.get().getArtistId(), "Artist id must not be null after create!");
-        assertTrue(persistentArtistm.get().getArtistId() >0, "Artist id must be greater than 0 after create!");
+        assertNotNull( persistentArtist.get().getArtistId(), "Artist id must not be null after create!");
+        assertTrue(persistentArtist.get().getArtistId() >0, "Artist id must be greater than 0 after create!");
     }
 
     @Test

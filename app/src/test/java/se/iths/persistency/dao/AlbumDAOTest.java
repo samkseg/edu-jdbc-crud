@@ -1,9 +1,12 @@
 package se.iths.persistency.dao;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
 import se.iths.persistency.model.Album;
+import se.iths.persistency.model.Artist;
+import se.iths.persistency.model.Track;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -12,12 +15,25 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AlbumDAOTest {
-    AlbumDAO albumDAO = new AlbumDAO();
-
+    static AlbumDAO albumDAO = new AlbumDAO();
     @BeforeAll
     public static void setUp() throws Exception {
         App app = new App();
         app.load();
+    }
+
+    @AfterAll
+    public static void last() throws Exception {
+        deleteAllModified();
+    }
+
+    private static void deleteAllModified() throws SQLException {
+        Optional<Album> album1 = albumDAO.findById(354);
+        albumDAO.delete(album1.get());
+        Optional<Album> album2 = albumDAO.findById(356);
+        albumDAO.delete(album2.get());
+        Optional<Album> album3 = albumDAO.findById(357);
+        albumDAO.delete(album3.get());
     }
 
     @Test

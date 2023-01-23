@@ -32,7 +32,7 @@ public class App {
     loadArtistsAlbumsTracks();
   }
 
-  protected static void printList() {
+  public static void printList() {
     for(Artist artist : artists.values()){
       System.out.println(artist);
     }
@@ -196,7 +196,7 @@ public class App {
   }
 
   // DELETE - removes objects from database
-  protected static boolean deleteArtist(long artistId) throws SQLException {
+  public static boolean deleteArtist(long artistId) throws SQLException {
     Optional<Artist> artist = findArtistById(artistId);
     int countAlbum = 0;
     if (artist.isPresent()) {

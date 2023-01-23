@@ -1,8 +1,10 @@
 package se.iths.persistency.dao;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
+import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Track;
 
 import java.sql.SQLException;
@@ -13,12 +15,26 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TrackDAOTest {
-    TrackDAO trackDAO = new TrackDAO();
+    static TrackDAO trackDAO = new TrackDAO();
 
     @BeforeAll
     public static void setUp() throws Exception {
         App app = new App();
         app.load();
+    }
+
+    @AfterAll
+    public static void last() throws Exception {
+        deleteAllModified();
+    }
+
+    private static void deleteAllModified() throws SQLException {
+        Optional<Track> track1 = trackDAO.findById(3510);
+        trackDAO.delete(track1.get());
+        Optional<Track> track2 = trackDAO.findById(3511);
+        trackDAO.delete(track2.get());
+        Optional<Track> track3 = trackDAO.findById(3512);
+        trackDAO.delete(track3.get());
     }
 
     @Test
