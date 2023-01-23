@@ -1,7 +1,6 @@
 package se.iths.persistency.dao;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
 import se.iths.persistency.ConnectToDB;
@@ -13,12 +12,12 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static se.iths.persistency.dao.DAOUtil.execute;
 
 public class AlbumDAOTest {
     private static Connection con = null;
     AlbumDAO albumDAO = new AlbumDAO();
 
+    @BeforeAll
     public static void setUp() throws Exception {
         con = ConnectToDB.connect();
         App app = new App();
@@ -58,7 +57,7 @@ public class AlbumDAOTest {
     }
 
     @Test
-    public void shouldFindAllAlbumsForArtis() throws SQLException {
+    public void shouldFindAllAlbumsForArtist() throws SQLException {
         //Given
         Long artistId = 1L;
 
@@ -91,7 +90,7 @@ public class AlbumDAOTest {
         Optional<Album> album = albumDAO.findById(nonExistingId);
 
         //Then
-        assertNull(album.get(), "Albums must not be found with faulty id!");
+        assertTrue(album.isEmpty(), "Albums must not be found with faulty id!");
     }
 
     @Test
@@ -113,13 +112,13 @@ public class AlbumDAOTest {
     @Test
     public void shouldDeleteAlbum() throws SQLException {
         //Given
-        Long existingId = 348L;
+        Long existingId = 275L;
         Optional<Album> album = albumDAO.create(new Album("A title", existingId));
 
         //When
         albumDAO.delete(album.get());
 
         //Then
-        assertNull(albumDAO.findById(album.get().getAlbumId()), "Album must not exist after delete");
+        assertTrue(albumDAO.findById(album.get().getAlbumId()).isEmpty(), "Album must not exist after delete");
     }
 }

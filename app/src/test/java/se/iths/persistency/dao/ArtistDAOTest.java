@@ -1,8 +1,6 @@
 package se.iths.persistency.dao;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
 import se.iths.persistency.ConnectToDB;
@@ -15,7 +13,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static se.iths.persistency.dao.DAOUtil.execute;
 
 public class ArtistDAOTest {
     private static Connection con = null;
@@ -60,7 +57,7 @@ public class ArtistDAOTest {
         Optional<Artist> artist = artistDAO.findById(nonExistingId);
 
         //Then
-        assertNull(artist, "Artists must not be found with faulty id!");
+        assertTrue(artist.isEmpty(), "Artists must not be found with faulty id!");
     }
 
     @Test
@@ -143,7 +140,7 @@ public class ArtistDAOTest {
         artistDAO.delete(artist.get());
 
         //Then
-        assertNull(artistDAO.findById(artistId), "Artist must not exist after delete");
+        assertTrue(artistDAO.findById(artistId).isEmpty(), "Artist must not exist after delete");
     }
 
     @Test
@@ -156,6 +153,6 @@ public class ArtistDAOTest {
         artistDAO.delete(artist.get());
 
         //Then
-        assertNull(artistDAO.findById(artistId), "Artist must not exist after delete");
+        assertTrue(artistDAO.findById(artistId).isEmpty(), "Artist must not exist after delete");
     }
 }
