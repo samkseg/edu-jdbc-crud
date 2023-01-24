@@ -26,51 +26,58 @@ erDiagram
 	varchar Name
 
     }
+```
 
+## Class Diagram
+
+```mermaid
 classDiagram
     Artist "1" o-- "0..*" Album 
     Album "1" o-- "0..*" Track 
 
-    class Artist
-    Artist : long artistId
-    Artist : String name
-    Artist : +getArtistId() long
-    Artist : +getName() String
-    Artist : +setArtistId(artistId)
-    Artist : +setName(name)
-    Artist : +getAlbums() Collection~Album~
-    Artist : +add(album)
-    Artist : +addAll(artistAlbums)
-    Artist : +replace(album)
-    Artist : +remove(album)
-    Artist : +removeAll()
-    
-    class Album
-    Album : long albumId
-    Album : String title
-    Album : long artistId
-    Album : +getAlbumId() long
-    Album : +getTitle() String
-    Album : +getTracks() Collection~Album~
-    Album : +setAlbumId(albumId)
-    Album : +setTitle(title)
-    Album : +setArtistId(artistId)
-    Album : +add(track)
-    Album : +addAll(albumTracks)
-    Album : +replace(track)
-    Album : +remove(track)
-    Album : +removeAll()
+    class Artist {
+    	-long artistId
+    	-String name
+    	+getArtistId() long
+    	+getName() String
+    	+setArtistId(artistId)
+    	+setName(name)
+    	+getAlbums() Collection~Album~
+    	+add(album)
+    	+addAll(artistAlbums)
+    	+replace(album)
+    	+remove(album)
+    	+removeAll()
+    }
 
-    class Track
-    Track : -long trackId
-    Track : -String name
-    Track : -long albumId
-    Track : +getTrackId() long
-    Track : +getName() String
-    Track : +getAlbumId() long
-    Track : +setTrackId(trackId)
-    Track : +setName(name)
-    Track : +setAlbumId(albumId)
+    class Album {
+    	-long albumId
+    	-String title
+    	-long artistId
+    	+getAlbumId() long
+    	+getTitle() String
+    	+getTracks() Collection~Album~
+    	+setAlbumId(albumId)
+    	+setTitle(title)
+    	+setArtistId(artistId)
+    	+add(track)
+    	+addAll(albumTracks)
+    	+replace(track)
+    	+remove(track)
+    	+removeAll()
+    }
+
+    class Track {
+    	-long trackId
+    	-String name
+    	-long albumId
+    	+getTrackId() long
+    	+getName() String
+    	+getAlbumId() long
+    	+setTrackId(trackId)
+    	+setName(name)
+    	+setAlbumId(albumId)
+    }
 ```
 
 CRUD JDBC
