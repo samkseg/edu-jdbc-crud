@@ -32,8 +32,8 @@ classDiagram
     Album "1" o-- "0..*" Track 
 
     class Artist
-    Artist : -long artistId
-    Artist : -String name
+    Artist : long artistId
+    Artist : String name
     Artist : +getArtistId() long
     Artist : +getName() String
     Artist : +setArtistId(artistId)
@@ -46,9 +46,9 @@ classDiagram
     Artist : +removeAll()
     
     class Album
-    Album : -long albumId
-    Album : -String title
-    Album : -long artistId
+    Album : long albumId
+    Album : String title
+    Album : long artistId
     Album : +getAlbumId() long
     Album : +getTitle() String
     Album : +getTracks() Collection~Album~
