@@ -56,7 +56,7 @@ classDiagram
     	-long artistId
     	+getAlbumId() long
     	+getTitle() String
-    	+getTracks() Collection~Album~
+    	+getTracks() Collection~Track~
     	+setAlbumId(albumId)
     	+setTitle(title)
     	+setArtistId(artistId)
