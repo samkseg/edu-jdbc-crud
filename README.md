@@ -32,8 +32,8 @@ erDiagram
 
 ```mermaid
 classDiagram
-    Artist "1" o-- "0..*" Album 
-    Album "1" o-- "0..*" Track 
+    Artist "1" o-- "0..*" Album : has
+    Album "1" o-- "0..*" Track : has
 
     class Artist {
     	-long artistId
