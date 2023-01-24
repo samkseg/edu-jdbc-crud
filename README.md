@@ -30,7 +30,7 @@ erDiagram
 classDiagram
     Artist "1" o-- "0..*" Album : has
     Album "1" o-- "0..*" Track : has
-    
+
     class Artist
     Artist : -long artistId
     Artist : -String name
