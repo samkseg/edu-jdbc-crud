@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import se.iths.App;
 import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Artist;
-import se.iths.persistency.model.Track;
 
 import java.sql.SQLException;
 import java.util.Collection;
@@ -16,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ArtistDAOTest {
     static ArtistDAO artistDAO = new ArtistDAO();
-    static App app = new App();
 
     @BeforeAll
     public static void setUp() throws Exception {
+        App app = new App();
         app.load();
     }
     @AfterAll

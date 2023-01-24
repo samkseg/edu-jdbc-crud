@@ -4,7 +4,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import se.iths.App;
-import se.iths.persistency.model.Album;
 import se.iths.persistency.model.Track;
 
 import java.sql.SQLException;

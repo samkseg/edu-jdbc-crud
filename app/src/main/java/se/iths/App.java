@@ -12,7 +12,7 @@ import java.util.*;
 
 public class App {
 
-  private static final ArtistDAO artistDAO = new ArtistDAO();
+  protected static final ArtistDAO artistDAO = new ArtistDAO();
   protected static final AlbumDAO albumDAO = new AlbumDAO();
   protected static final TrackDAO trackDAO = new TrackDAO();
   protected static HashMap<Long, Artist> artists = new HashMap<>();
