@@ -42,10 +42,6 @@ public class Album {
         return tracks.values();
     }
 
-    public Track getTrack (long trackId){
-        return tracks.get(trackId);
-    }
-
     public void add(Track track) {
         tracks = tracks==null?new HashMap<Long, Track>():tracks;
         tracks.put(track.trackId, track);

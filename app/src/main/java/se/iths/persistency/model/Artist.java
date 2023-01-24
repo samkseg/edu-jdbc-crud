@@ -36,10 +36,6 @@ public class Artist {
         return albums.values();
     }
 
-    public Album getAlbum (long albumId){
-        return albums.get(albumId);
-    }
-
     public void add(Album album) {
         albums = albums==null?new HashMap<Long, Album>():albums;
         albums.put(album.albumId, album);
