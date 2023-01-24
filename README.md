@@ -28,8 +28,8 @@ erDiagram
     }
 
 classDiagram
-    Artist "1" o-- "0..*" Album : has
-    Album "1" o-- "0..*" Track : has
+    Artist "1" o-- "0..*" Album 
+    Album "1" o-- "0..*" Track 
 
     class Artist
     Artist : -long artistId
