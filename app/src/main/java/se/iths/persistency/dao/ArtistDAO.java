@@ -1,7 +1,7 @@
 package se.iths.persistency.dao;
 
 import se.iths.persistency.CRUDInterface;
-import se.iths.persistency.ConnectToDB;
+import se.iths.persistency.ConnectionHandler;
 import se.iths.persistency.model.Artist;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ public class ArtistDAO implements CRUDInterface<Artist> {
     Connection con = null;
     @Override
     public Collection<Artist> findAll() throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         Collection<Artist> artists = new ArrayList<>();
         ResultSet rs = con.createStatement().executeQuery("SELECT ArtistId, Name FROM Artist");
         long oldId = -1L;
@@ -27,14 +27,14 @@ public class ArtistDAO implements CRUDInterface<Artist> {
                 oldId = artistId;
             }
         }
-        rs.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(con);
         return artists;
     }
 
     @Override
     public Optional<Artist> findById(long artistId) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("SELECT ArtistId, Name FROM Artist WHERE ArtistId = ?");
         stat.setLong(1, artistId);
         ResultSet rs = stat.executeQuery();
@@ -45,15 +45,15 @@ public class ArtistDAO implements CRUDInterface<Artist> {
             artist = Optional.of(new Artist(name));
             artist.get().setArtistId(newArtistId);
         }
-        rs.close();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return artist;
     }
 
     @Override
     public Optional<Artist> create(Artist artist) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("INSERT INTO Artist(Name) VALUES (?)");
         String name = artist.getName();
         stat.setString(1, name);
@@ -63,26 +63,26 @@ public class ArtistDAO implements CRUDInterface<Artist> {
         rs.next();
         long newArtistId = rs.getLong("ArtistId");
         artist.setArtistId(newArtistId);
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return Optional.of(artist);
     }
 
     @Override
     public Optional<Artist> update(Artist artist) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("UPDATE Artist SET Name = ? WHERE ArtistId = ?");
         stat.setString(1, artist.getName());
         stat.setLong(2, artist.getArtistId());
         stat.execute();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return Optional.of(artist);
     }
 
     @Override
     public boolean delete(Artist artist) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         ResultSet rs = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
         rs.next();
         long countBefore = rs.getLong("Count(*)");
@@ -94,8 +94,8 @@ public class ArtistDAO implements CRUDInterface<Artist> {
         rs = con.createStatement().executeQuery("SELECT Count(*) FROM Artist");
         rs.next();
         long countAfter = rs.getLong("Count(*)");
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);;
         return countBefore == countAfter + 1;
     }
 }

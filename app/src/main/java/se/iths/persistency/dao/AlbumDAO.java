@@ -1,7 +1,7 @@
 package se.iths.persistency.dao;
 
 import se.iths.persistency.CRUDInterface;
-import se.iths.persistency.ConnectToDB;
+import se.iths.persistency.ConnectionHandler;
 import se.iths.persistency.model.Album;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ public class AlbumDAO implements CRUDInterface<Album> {
     Connection con = null;
     @Override
     public Collection<Album> findAll() throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         Collection<Album> albums = new ArrayList<>();
         ResultSet rs = con.createStatement().executeQuery("SELECT AlbumId, Title, ArtistId FROM Album");
         long oldId = -1L;
@@ -31,14 +31,14 @@ public class AlbumDAO implements CRUDInterface<Album> {
                 oldId = albumId;
             }
         }
-        rs.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(con);
         return albums;
     }
 
     @Override
     public Optional<Album> findById(long albumId) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("SELECT Title, ArtistId FROM Album WHERE AlbumId = ?");
         stat.setLong(1, albumId);
         ResultSet rs = stat.executeQuery();
@@ -49,14 +49,14 @@ public class AlbumDAO implements CRUDInterface<Album> {
             album = Optional.of(new Album(title, artistId));
             album.get().setAlbumId(albumId);
         }
-        rs.close();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return album;
     }
 
     public Collection<Album> findByArtistId(long artistId) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         Collection<Album> albums = new ArrayList<>();
         PreparedStatement stat = con.prepareStatement("SELECT AlbumId, Title, ArtistId FROM Album WHERE ArtistId = ?");
         stat.setLong(1, artistId);
@@ -68,15 +68,15 @@ public class AlbumDAO implements CRUDInterface<Album> {
             album.get().setAlbumId(albumId);
             albums.add(album.get());
         }
-        rs.close();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return albums;
     }
 
     @Override
     public Optional<Album> create(Album album) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("INSERT INTO Album(Title, ArtistId) VALUES (?, ?)");
         String title = album.getTitle();
         long artistId = album.getArtistId();
@@ -91,26 +91,26 @@ public class AlbumDAO implements CRUDInterface<Album> {
         rs.next();
         long newAlbumId = rs.getLong("AlbumId");
         album.setAlbumId(newAlbumId);
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return Optional.of(album);
     }
 
     @Override
     public Optional<Album> update(Album album) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("UPDATE Album SET Title = ? WHERE AlbumId = ?");
         stat.setString(1, album.getTitle());
         stat.setLong(2, album.getAlbumId());
         stat.execute();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return Optional.of(album);
     }
 
     @Override
     public boolean delete(Album album) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         ResultSet rs = con.createStatement().executeQuery("SELECT Count(*) FROM Album");
         rs.next();
         long countBefore = rs.getLong("Count(*)");
@@ -122,8 +122,8 @@ public class AlbumDAO implements CRUDInterface<Album> {
         rs = con.createStatement().executeQuery("SELECT Count(*) FROM Album");
         rs.next();
         long countAfter = rs.getLong("Count(*)");
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return countBefore == countAfter + 1;
     }
 }

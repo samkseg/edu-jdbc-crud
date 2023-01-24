@@ -1,7 +1,7 @@
 package se.iths.persistency.dao;
 
 import se.iths.persistency.CRUDInterface;
-import se.iths.persistency.ConnectToDB;
+import se.iths.persistency.ConnectionHandler;
 import se.iths.persistency.model.Track;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ public class TrackDAO implements CRUDInterface<Track> {
     Connection con = null;
     @Override
     public Collection<Track> findAll() throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         Collection<Track> tracks = new ArrayList<>();
         ResultSet rs = con.createStatement().executeQuery("SELECT TrackId, Name, AlbumId FROM Track");
         long oldId = -1L;
@@ -31,14 +31,14 @@ public class TrackDAO implements CRUDInterface<Track> {
                 oldId = trackId;
             }
         }
-        rs.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(con);
         return tracks;
     }
 
     @Override
     public Optional<Track> findById(long trackId) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("SELECT Name, AlbumId FROM Track WHERE TrackId = ?");
         stat.setLong(1, trackId);
         ResultSet rs = stat.executeQuery();
@@ -49,16 +49,16 @@ public class TrackDAO implements CRUDInterface<Track> {
             track = Optional.of(new Track(name, albumId));
             track.get().setTrackId(trackId);
         }
-        rs.close();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return track;
     }
 
 
 
     public Collection<Track> findByAlbumId(long albumId) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         Collection<Track> tracks = new ArrayList<>();
         PreparedStatement stat = con.prepareStatement("SELECT TrackId, Name, AlbumId FROM Track WHERE AlbumId = ?");
         stat.setLong(1, albumId);
@@ -70,15 +70,15 @@ public class TrackDAO implements CRUDInterface<Track> {
             track.get().setTrackId(trackId);
             tracks.add(track.get());
         }
-        rs.close();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(rs);
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return tracks;
     }
 
     @Override
     public Optional<Track> create(Track track) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("INSERT INTO Track(Name, AlbumId, MediaTypeId, Milliseconds, UnitPrice) VALUES (?, ?, ?, ?, ?)");
         String name = track.getName();
         long albumId = track.getAlbumId();
@@ -96,26 +96,26 @@ public class TrackDAO implements CRUDInterface<Track> {
         rs.next();
         long newTrackId = rs.getLong("TrackId");
         track.setTrackId(newTrackId);
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return Optional.of(track);
     }
 
     @Override
     public Optional<Track> update(Track track) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("UPDATE Track SET Name = ? WHERE TrackId = ?");
         stat.setString(1, track.getName());
         stat.setLong(2, track.getTrackId());
         stat.execute();
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return Optional.of(track);
     }
 
     @Override
     public boolean delete(Track track) throws SQLException {
-        con = ConnectToDB.connect();
+        con = ConnectionHandler.connect();
         PreparedStatement stat = con.prepareStatement("DELETE FROM PlaylistTrack WHERE TrackId = ?");
         stat.setLong(1, track.getTrackId());
         stat.execute();
@@ -131,8 +131,8 @@ public class TrackDAO implements CRUDInterface<Track> {
         rs = con.createStatement().executeQuery("SELECT Count(*) FROM Track");
         rs.next();
         long countAfter = rs.getLong("Count(*)");
-        stat.close();
-        con.close();
+        ConnectionHandler.close(stat);
+        ConnectionHandler.close(con);
         return countBefore == countAfter + 1;
     }
 }
