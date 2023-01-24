@@ -20,10 +20,6 @@ public class Artist {
         this.artistId = artistId;
     }
 
-    public Long getId() {
-        return artistId;
-    }
-
     public String getName() {
         return name;
     }
@@ -42,7 +38,7 @@ public class Artist {
     }
 
     public void addAll(Collection<Album> artistAlbums) {
-        albums = new HashMap<Long, Album>();
+        albums = new HashMap<>();
         artistAlbums.forEach(album -> albums.put(album.albumId, album));
     }
 

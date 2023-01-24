@@ -43,12 +43,12 @@ public class Album {
     }
 
     public void add(Track track) {
-        tracks = tracks==null?new HashMap<Long, Track>():tracks;
+        tracks = tracks==null?new HashMap<>():tracks;
         tracks.put(track.trackId, track);
     }
 
     public void addAll(Collection<Track> albumTracks) {
-        tracks = new HashMap<Long, Track>();
+        tracks = new HashMap<>();
         albumTracks.forEach(track -> tracks.put(track.trackId, track));
     }
 
