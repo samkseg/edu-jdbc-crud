@@ -160,7 +160,7 @@ class AppTest {
     // DELETE - removes objects from database
     @Order(12)
     @Test
-    void shouldDeleteAlbums() throws SQLException {
+    void shouldDeleteAlbum() throws SQLException {
         assertTrue(app.deleteAlbum(348));
         Optional<Album> album1 = app.findAlbumById(348);
 
@@ -174,7 +174,7 @@ class AppTest {
 
     @Order(13)
     @Test
-    void shouldDeleteArtists() throws SQLException {
+    void shouldDeleteArtist() throws SQLException {
         assertTrue(app.deleteArtist(276));
         Optional<Artist> artist1 = app.findArtistById(276);
 
@@ -187,7 +187,7 @@ class AppTest {
     }
     @Order(14)
     @Test
-    void shouldDeleteTracks() throws SQLException {
+    void shouldDeleteTrack() throws SQLException {
         assertTrue(app.deleteTrack(3505));
         Optional<Track> track = app.findTrackById(3505);
 
@@ -218,17 +218,21 @@ class AppTest {
     // Optional - prevent empty object insertion to database
     @Order(16)
     @Test
-    void shouldNotCreateWithoutParent () throws SQLException {
+    void shouldNotCreateArtistWithoutParent () throws SQLException {
         Optional<Album> TestAddAlbumWithoutArtistId = app.addAlbum(0, "TestTitle");
 
         assertTrue(TestAddAlbumWithoutArtistId.isEmpty());
+    }
 
+    @Order(17)
+    @Test
+    void shouldNotCreateAlbumWithoutParent () throws SQLException {
         Optional<Track> TestAddTrackWithoutAlbumId = app.addTrack(0, "TestTrack");
 
         assertTrue(TestAddTrackWithoutAlbumId.isEmpty());
     }
 
-    @Order(17)
+    @Order(18)
     @Test
     void shouldFindEmptyArtist () throws SQLException {
         Optional<Artist> testGetEmptyArtist = app.findArtistById(0);
@@ -236,7 +240,7 @@ class AppTest {
         assertTrue(testGetEmptyArtist.isEmpty());
     }
 
-    @Order(18)
+    @Order(19)
     @Test
     void shouldFindEmptyAlbum () throws SQLException {
         Optional<Album> testGetEmptyAlbum = app.findAlbumById(0);
@@ -244,7 +248,7 @@ class AppTest {
         assertTrue(testGetEmptyAlbum.isEmpty());
     }
 
-    @Order(19)
+    @Order(20)
     @Test
     void shouldFindEmptyTrack () throws SQLException {
         Optional<Track> testGetEmptyTrack = app.findTrackById(0);
@@ -252,7 +256,7 @@ class AppTest {
         assertTrue(testGetEmptyTrack.isEmpty());
     }
 
-    @Order(2)
+    @Order(21)
     @Test
     void shouldNotUpdateEmptyArtist () throws SQLException {
         Optional<Artist> testUpdateEmptyArtist = app.updateArtist(0, "NewTestArtist");
@@ -260,7 +264,7 @@ class AppTest {
         assertTrue(testUpdateEmptyArtist.isEmpty());
     }
 
-    @Order(21)
+    @Order(22)
     @Test
     void shouldNotUpdateEmptyAlbum () throws SQLException {
         Optional<Album> testUpdateEmptyAlbum = app.updateAlbum(0, "NewTestAlbum");
@@ -268,7 +272,7 @@ class AppTest {
         assertTrue(testUpdateEmptyAlbum.isEmpty());
     }
 
-    @Order(22)
+    @Order(23)
     @Test
     void shouldNotUpdateEmptyTrack () throws SQLException {
         Optional<Track> testUpdateEmptyTrack = app.updateTrack(0, "NewTestTrack2");
@@ -276,7 +280,7 @@ class AppTest {
         assertTrue(testUpdateEmptyTrack.isEmpty());
     }
 
-    @Order(23)
+    @Order(24)
     @Test
     void shouldNotDeleteEmptyArtist () throws SQLException {
         boolean deletedArtist = app.deleteArtist(0);
@@ -284,7 +288,7 @@ class AppTest {
         assertFalse(deletedArtist);
     }
 
-    @Order(24)
+    @Order(25)
     @Test
     void shouldNotDeleteEmptyAlbum () throws SQLException {
         boolean deletedAlbum = app.deleteAlbum(0);
@@ -292,7 +296,7 @@ class AppTest {
         assertFalse(deletedAlbum);
     }
 
-    @Order(25)
+    @Order(26)
     @Test
     void shouldNotDeleteEmptyTrack () throws SQLException {
         boolean deletedTrack = app.deleteTrack(0);
