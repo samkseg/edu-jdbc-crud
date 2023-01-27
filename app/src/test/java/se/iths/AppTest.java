@@ -157,7 +157,6 @@ class AppTest {
     }
 
     // DELETE - removes objects from database
-
     @Order(12)
     @Test
     void shouldDeleteAlbum() throws SQLException {
@@ -197,7 +196,7 @@ class AppTest {
 
     @Order(15)
     @Test
-    void shouldDeleteArtistWithAlbumsTracks() throws SQLException {
+    void shouldDeleteArtistWithAlbumsAndTracks() throws SQLException {
         assertTrue(app.deleteArtist(279));
 
         Collection<Album> allAlbums = app.findAllAlbums();
@@ -218,7 +217,7 @@ class AppTest {
     // Optional - prevent empty object insertion to database
     @Order(16)
     @Test
-    void shouldNotCreateArtistWithoutParent () throws SQLException {
+    void shouldNotCreateAlbumWithoutParent () throws SQLException {
         Optional<Album> TestAddAlbumWithoutArtistId = app.addAlbum(0, "TestTitle");
 
         assertTrue(TestAddAlbumWithoutArtistId.isEmpty());
@@ -226,7 +225,7 @@ class AppTest {
 
     @Order(17)
     @Test
-    void shouldNotCreateAlbumWithoutParent () throws SQLException {
+    void shouldNotCreateTrackWithoutParent () throws SQLException {
         Optional<Track> TestAddTrackWithoutAlbumId = app.addTrack(0, "TestTrack");
 
         assertTrue(TestAddTrackWithoutAlbumId.isEmpty());
