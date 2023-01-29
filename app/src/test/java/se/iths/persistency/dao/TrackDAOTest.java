@@ -42,8 +42,8 @@ public class TrackDAOTest {
 
         Optional<Track> persistentTrack = trackDAO.create(track);
 
-        assertNotNull( persistentTrack.get().getTrackId(), "Album id must not be null after create!");
-        assertTrue(persistentTrack.get().getTrackId() >0, "Album id must be greater than 0 after create!");
+        assertNotNull( persistentTrack.get().getTrackId(), "Track id must not be null after create!");
+        assertTrue(persistentTrack.get().getTrackId() >0, "Track id must be greater than 0 after create!");
     }
 
     @Test
@@ -58,8 +58,8 @@ public class TrackDAOTest {
     public void shouldFindAllTracks() throws SQLException {
         Collection<Track> tracks = trackDAO.findAll();
 
-        assertNotNull(tracks, "Albums must not be null after find all!");
-        assertTrue(tracks.size() > 0 , "Albums must exist after find all!");
+        assertNotNull(tracks, "Track must not be null after find all!");
+        assertTrue(tracks.size() > 0 , "Track must exist after find all!");
     }
 
     @Test
@@ -68,8 +68,8 @@ public class TrackDAOTest {
 
         Collection<Track> tracks = trackDAO.findByAlbumId(albumId);
 
-        assertNotNull(tracks, "Albums must not be null after find all!");
-        assertTrue(tracks.size() > 0 , "Albums must exist after find all!");
+        assertNotNull(tracks, "Tracks must not be null after find all!");
+        assertTrue(tracks.size() > 0 , "Tracks must exist after find all!");
     }
 
     @Test
@@ -88,7 +88,7 @@ public class TrackDAOTest {
 
         Optional<Track> track = trackDAO.findById(nonExistingId);
 
-        assertTrue(track.isEmpty(), "Albums must not be found with faulty id!");
+        assertTrue(track.isEmpty(), "Tracks must not be found with faulty id!");
     }
 
     @Test
@@ -111,6 +111,6 @@ public class TrackDAOTest {
 
         trackDAO.delete(track.get());
 
-        assertTrue(trackDAO.findById(track.get().getTrackId()).isEmpty(), "Album must not exist after delete");
+        assertTrue(trackDAO.findById(track.get().getTrackId()).isEmpty(), "Track must not exist after delete");
     }
 }

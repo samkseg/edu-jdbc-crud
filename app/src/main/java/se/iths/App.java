@@ -64,7 +64,7 @@ public class App {
       Optional<Artist> artist = findArtistById(album.get().getArtistId());
       if (artist.isPresent()) {
         Optional<Track> track = trackDAO.create(new Track(name, album.get().getAlbumId()));
-        track.ifPresent(a -> album.get().add(a));
+        track.ifPresent(t -> album.get().add(t));
         return track;
       }
     }
